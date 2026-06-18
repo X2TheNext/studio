@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATCHÉ VISUALS — Studio</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@200;300;400;500;600;700&display=swap');
+
+:root {
+  --black: #080808;
+  --surface: #111111;
+  --surface2: #181818;
+  --surface3: #242424;
+  --border: #222222;
+  --border2: #2e2e2e;
+  --gold: #C9A84C;
+  --gold-light: #E2C47A;
+  --gold-dim: rgba(201,168,76,0.12);
+  --text: #F2EDE6;
+  --text2: #B0A898;
+  --text3: #8A7E72;
+  --sage: #6B9E7A;
+  --sage-dim: rgba(107,158,122,0.15);
+  --rose: #C2697A;
+  --rose-dim: rgba(194,105,122,0.12);
+  --t: 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--black);color:var(--text);min-height:100vh;padding:24px;overflow-x:hidden;display:flex;flex-direction:column;align-items:center}
+
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px;opacity:0.025;pointer-events:none;z-index:0}
+
+/* ---- AMBIENT BACKGROUND ---- */
+.bg-fx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-glow{position:absolute;border-radius:50%;filter:blur(50px);will-change:transform}
+.bg-glow-gold{top:-140px;left:50%;width:560px;height:420px;transform:translate(-50%,var(--py1,0px));background:radial-gradient(ellipse at center, rgba(201,168,76,0.10) 0%, transparent 70%)}
+.bg-glow-rose{bottom:-180px;right:-100px;width:460px;height:460px;transform:translateY(var(--py2,0px));background:radial-gradient(ellipse at center, rgba(194,105,122,0.07) 0%, transparent 70%)}
+.bg-glow-sage{top:40%;left:-160px;width:380px;height:380px;transform:translateY(var(--py3,0px));background:radial-gradient(ellipse at center, rgba(107,158,122,0.06) 0%, transparent 70%)}
+.spark{position:absolute;border-radius:50%;background:var(--gold-light);opacity:0;animation:spark-float linear infinite}
+@keyframes spark-float{0%{opacity:0;transform:translateY(0) scale(0.6)}8%{opacity:0.55}92%{opacity:0.35}100%{opacity:0;transform:translateY(-140px) scale(1)}}
+
+.wrap{max-width:680px;width:100%;position:relative;z-index:1}
+
+/* LOADING */
+#loadingScreen{position:fixed;inset:0;background:var(--black);z-index:200;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.load-mark{font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:var(--gold);letter-spacing:8px;animation:pulse 1.4s ease-in-out infinite}
+.load-sub{font-size:10px;color:var(--text3);letter-spacing:3px;text-transform:uppercase}
+@keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}
+
+/* LOGIN */
+#loginScreen{width:100%;max-width:400px;margin:0 auto;position:relative;z-index:1}
+.av-logo{text-align:center;margin-bottom:40px}
+.av-wordmark{font-family:'Playfair Display',serif;font-size:38px;font-weight:700;color:var(--gold);letter-spacing:8px;display:block}
+.av-sub{font-family:'Playfair Display',serif;font-size:13px;font-style:italic;color:var(--text2);letter-spacing:3px;margin-top:2px}
+.av-rule{width:48px;height:1px;background:rgba(201,168,76,0.3);margin:16px auto}
+.av-tagline{font-size:10px;color:var(--text3);letter-spacing:4px;text-transform:uppercase}
+
+.login-card{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:36px;position:relative;overflow:hidden}
+.login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent)}
+.login-card h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;color:var(--text);margin-bottom:6px;text-align:center}
+.login-card p{font-size:12px;color:var(--text3);text-align:center;margin-bottom:28px;letter-spacing:0.3px;line-height:1.6}
+
+.form-group{margin-bottom:14px}
+.form-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.form-input{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:11px 14px;color:var(--text);font-size:14px;outline:none;transition:border-color var(--t);font-family:'Inter',sans-serif}
+.form-input:focus{border-color:var(--gold)}
+.form-input::placeholder{color:var(--text3)}
+
+.btn-primary{width:100%;padding:13px;background:var(--gold);color:var(--black);border:none;border-radius:8px;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:var(--t)}
+.btn-primary:hover:not(:disabled){background:var(--gold-light)}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed}
+
+.auth-switch{text-align:center;margin-top:16px;font-size:12px;color:var(--text3)}
+.auth-switch a{color:var(--gold);cursor:pointer;font-weight:500}
+.auth-switch a:hover{text-decoration:underline}
+.auth-err{background:rgba(194,105,122,0.1);border:1px solid rgba(194,105,122,0.3);border-radius:8px;padding:10px 12px;font-size:12px;color:#E8A0AE;margin-bottom:14px;display:none;line-height:1.5}
+.auth-loading{text-align:center;font-size:11px;color:var(--text3);margin-top:10px;display:none;letter-spacing:1px}
+
+/* STUDIO */
+#studioScreen{display:none}
+.av-header{text-align:center;margin-bottom:28px;padding-top:8px}
+.av-header-user{font-size:12px;color:var(--text2);margin-top:8px}
+.av-header-user span{color:var(--gold);font-weight:500}
+.sign-out-link{color:var(--text3);cursor:pointer;text-decoration:none;transition:color var(--t)}
+.sign-out-link:hover{color:var(--text2)}
+.close-session-row{margin-top:18px;padding-top:16px;border-top:1px solid var(--border);text-align:center}
+.close-session-btn{background:transparent;border:1px solid var(--border2);border-radius:8px;color:var(--text3);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:10px 20px;cursor:pointer;transition:border-color var(--t),color var(--t)}
+.close-session-btn:hover{border-color:rgba(194,105,122,0.4);color:var(--rose)}
+
+.card{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:26px;position:relative;overflow:hidden;margin-bottom:18px}
+.card:has(#sessList){overflow:visible}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent)}
+.card h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px}
+.card .card-desc{font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:16px}
+.step-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);background:var(--gold-dim);border:1px solid rgba(201,168,76,0.3);border-radius:20px;padding:3px 10px;margin-bottom:12px}
+
+/* REVENUE */
+.rev-row{display:flex;gap:16px}
+.rev-box{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:16px;text-align:center}
+.rev-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--gold);min-height:34px}
+.rev-label{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px}
+.rev-skel{display:inline-block;width:52px;height:22px;margin-top:6px;border-radius:6px;background:linear-gradient(90deg,var(--surface3) 25%,var(--border2) 50%,var(--surface3) 75%);background-size:200% 100%;animation:skel-shine 1.4s ease-in-out infinite}
+@keyframes skel-shine{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* NEW SESSION */
+.row{display:flex;gap:10px}
+.row .form-input{flex:1}
+.row .btn-primary{width:auto;padding:11px 20px;white-space:nowrap}
+@media(max-width:480px){.row{flex-direction:column}.row .btn-primary{width:100%}}
+
+/* ---- SMALL-SCREEN SESSION LIST ---- */
+@media(max-width:540px){
+  .sess-item{flex-wrap:wrap;gap:8px;padding:10px 12px}
+  .sess-code{width:auto;font-size:14px}
+  .sess-meta{flex:1 1 100%;order:2}
+  .sess-badge{order:1}
+  .sess-open{order:3;min-height:auto;font-size:10px}
+  .sess-confirm{order:3;font-size:10px;padding:3px 10px;min-height:auto}
+  .sess-overflow{order:4}
+  .sess-overflow-menu{bottom:auto;top:calc(100% + 6px)}
+}
+
+/* ACTIVE SESSION */
+.session-active{display:none}
+.session-code{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--gold);letter-spacing:4px;text-align:center;margin-bottom:4px}
+.session-label{font-size:12px;color:var(--text2);text-align:center;margin-bottom:18px}
+.share-box{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.share-qr{width:130px;height:130px;border-radius:10px;border:1px solid var(--border2);background:#fff;flex-shrink:0;overflow:hidden}
+.share-qr img{width:100%;height:100%;display:block}
+.share-info{flex:1;min-width:180px}
+.share-link{font-size:12px;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;word-break:break-all;margin-bottom:10px;font-family:monospace}
+.btn-secondary{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid var(--gold);border-radius:8px;padding:9px 16px;cursor:pointer;transition:var(--t)}
+.btn-secondary:hover{background:var(--gold-dim)}
+
+/* UPLOAD */
+.drop-zone{border:1.5px dashed var(--border2);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;transition:var(--t);background:var(--surface2)}
+.drop-zone:hover, .drop-zone.drag{border-color:var(--gold);background:var(--gold-dim)}
+.drop-zone-icon{font-size:24px;margin-bottom:6px;display:block}
+.drop-zone-text{font-size:13px;color:var(--text2);font-weight:500}
+.drop-zone-sub{font-size:11px;color:var(--text3);margin-top:4px}
+#fileInput{display:none}
+
+.thumb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;max-height:420px;overflow-y:auto;padding-right:4px;scroll-behavior:smooth}
+.thumb{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;border:1px solid var(--border2);background:var(--surface2)}
+.thumb img{cursor:pointer;transition:transform .25s var(--t)}
+.thumb img:hover{transform:scale(1.04)}
+.thumb img, .thumb video{width:100%;height:100%;object-fit:cover;display:block}
+.thumb-tag{position:absolute;bottom:4px;left:4px;font-size:8px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--gold-light);background:rgba(8,8,8,0.7);border-radius:4px;padding:1px 5px}
+.thumb-delete{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(8,8,8,0.65);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;color:var(--text2);cursor:pointer;z-index:2;transition:var(--t)}
+.thumb-delete:hover{background:var(--rose);border-color:var(--rose);color:#fff}
+.thumb-delete:active{transform:scale(0.92)}
+.upload-status{font-size:11px;color:var(--text3);margin-top:10px;text-align:center;letter-spacing:0.5px}
+
+/* SESSION LIST */
+.sess-item{display:flex;align-items:center;gap:12px;border:1px solid var(--border2);border-radius:10px;padding:12px 14px;margin-bottom:8px;background:var(--surface2);transition:var(--t)}
+.sess-item:hover{border-color:rgba(201,168,76,0.4)}
+.sess-code{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--gold);letter-spacing:1px;width:64px;flex-shrink:0}
+.sess-meta{flex:1;min-width:0}
+.sess-label{font-size:12px;color:var(--text);font-weight:500}
+.sess-time{font-size:10px;color:var(--text3);margin-top:2px}
+.sess-badge{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 9px;flex-shrink:0}
+.badge-paid{background:var(--sage-dim);color:#9DC9A8;border:1px solid rgba(107,158,122,0.3)}
+.badge-pending{background:var(--rose-dim);color:#E8A0AE;border:1px solid rgba(194,105,122,0.3)}
+.badge-closed{background:var(--surface3);color:var(--text3);border:1px solid var(--border2)}
+.sess-open{font-size:11px;font-weight:600;color:var(--gold);cursor:pointer;letter-spacing:0.5px;flex-shrink:0;min-height:44px;display:flex;align-items:center}
+.sess-confirm{font-size:11px;font-weight:600;color:#9DC9A8;cursor:pointer;letter-spacing:0.5px;flex-shrink:0;border:1px solid rgba(107,158,122,0.35);border-radius:20px;padding:4px 12px;background:var(--sage-dim);min-height:32px;display:flex;align-items:center}
+.sess-reopen{font-size:11px;font-weight:600;color:var(--gold);cursor:pointer;letter-spacing:0.5px;flex-shrink:0;border:1px solid rgba(201,168,76,0.35);border-radius:20px;padding:4px 10px;background:var(--gold-dim)}
+.sess-reopen:hover{background:rgba(201,168,76,0.22)}
+.sess-delete{font-size:11px;font-weight:600;color:#E8A0AE;cursor:pointer;letter-spacing:0.5px;flex-shrink:0;border:1px solid rgba(194,105,122,0.35);border-radius:20px;padding:4px 10px;background:var(--rose-dim)}
+.sess-delete:hover{background:rgba(194,105,122,0.22)}
+.sess-empty{text-align:center;font-size:12px;color:var(--text3);padding:16px 0;font-style:italic}
+
+/* FOOTER */
+.av-footer{display:flex;align-items:center;justify-content:center;gap:24px;padding:18px 0 4px;font-size:11px;color:var(--text3);letter-spacing:0.5px}
+.av-footer a{color:var(--text3);cursor:pointer;transition:var(--t)}
+.av-footer a:hover{color:var(--gold)}
+
+/* ---- FOCUS STYLES ---- */
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+/* ---- CUSTOM MODAL ---- */
+.cm-overlay{position:fixed;inset:0;background:rgba(8,8,8,0.88);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.cm-overlay.show{display:flex;animation:cm-fade .2s ease}
+@keyframes cm-fade{from{opacity:0}to{opacity:1}}
+.cm-box{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:28px;max-width:420px;width:100%;position:relative;overflow:hidden;animation:cm-in .3s cubic-bezier(.16,1,.3,1)}
+@keyframes cm-in{from{transform:scale(0.96) translateY(8px)}to{transform:scale(1) translateY(0)}}
+.cm-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent)}
+.cm-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:8px}
+.cm-body{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:18px}
+.cm-field-group{margin-bottom:12px}
+.cm-field-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:5px}
+.cm-field-input{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;padding:10px 12px;font-family:inherit;outline:none;transition:border-color var(--t)}
+.cm-field-input:focus{border-color:var(--gold)}
+.cm-field-input::placeholder{color:var(--text3)}
+.cm-actions{display:flex;gap:10px;margin-top:20px}
+.cm-cancel{flex:1;padding:11px;background:transparent;border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:var(--t)}
+.cm-cancel:hover{background:var(--surface2)}
+.cm-confirm{flex:1;padding:11px;background:var(--gold);color:var(--black);border:none;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:var(--t)}
+.cm-confirm:hover{background:var(--gold-light)}
+.cm-confirm.danger{background:rgba(194,105,122,0.85);color:#fff}
+.cm-confirm.danger:hover{background:var(--rose)}
+.cm-confirm:only-child{flex:unset;width:100%}
+
+/* ---- TOAST ---- */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:10px 18px;font-size:13px;color:var(--text);z-index:400;transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .3s ease;opacity:0;pointer-events:none;white-space:nowrap;max-width:calc(100vw - 40px);text-overflow:ellipsis;overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,0.5)}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.success{border-color:rgba(107,158,122,0.5);color:#9DC9A8}
+.toast.error{border-color:rgba(194,105,122,0.5);color:#E8A0AE}
+
+/* ---- HEADER MOTION ---- */
+@keyframes header-in{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.av-header, .av-logo{animation:header-in 0.9s cubic-bezier(.16,1,.3,1) both}
+.av-logo .av-wordmark, .av-header .av-wordmark{
+  background:linear-gradient(100deg, var(--gold) 30%, var(--gold-light) 50%, var(--gold) 70%);
+  background-size:200% auto;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:wordmark-shine 9s ease-in-out infinite;
+}
+@keyframes wordmark-shine{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.av-rule{width:0 !important;animation:rule-draw 1s 0.35s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes rule-draw{to{width:48px}}
+
+/* ---- SCROLL REVEAL ---- */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity 0.7s cubic-bezier(.16,1,.3,1), transform 0.7s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ---- SESSION LIST STAGGER ---- */
+@keyframes item-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sess-item{animation:item-in .45s cubic-bezier(.16,1,.3,1) both;animation-delay:var(--d,0s);transition:transform var(--t),border-color var(--t)}
+.sess-item:hover{transform:translateY(-1px);border-color:rgba(201,168,76,0.4)}
+
+/* ---- CONFIRM PAID EMPHASIS ---- */
+@keyframes confirm-pulse{0%,100%{box-shadow:0 0 0 0 rgba(107,158,122,0.45)}50%{box-shadow:0 0 0 5px rgba(107,158,122,0)}}
+.sess-confirm{animation:confirm-pulse 2.2s ease-in-out infinite;transition:var(--t)}
+.sess-confirm:hover{background:rgba(107,158,122,0.28);animation-play-state:paused}
+
+/* ---- MANUAL MARK PAID (no client-side request yet) ---- */
+/* Same shape as Confirm Paid but muted/no pulse — it's a staff-initiated
+   override for "they paid but never tapped the button", not an urgent
+   client-side request. */
+.sess-manual-pay{animation:none;color:var(--text2);border-color:var(--border2);background:var(--surface3)}
+.sess-manual-pay:hover{background:var(--surface2);color:var(--gold)}
+.sess-overflow{position:relative;flex-shrink:0}
+.sess-overflow-btn{background:transparent;border:1px solid var(--border2);border-radius:6px;color:var(--text3);font-size:14px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--t);line-height:1;padding-bottom:4px}
+.sess-overflow-btn:hover{background:var(--surface3);color:var(--text);border-color:rgba(201,168,76,0.3)}
+.sess-overflow-menu{position:absolute;right:0;bottom:calc(100% + 6px);background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:6px;z-index:100;min-width:156px;box-shadow:0 -4px 24px rgba(0,0,0,0.6);display:none}
+.sess-overflow-menu.open{display:block;animation:cm-in .18s cubic-bezier(.16,1,.3,1)}
+.sess-overflow-item{display:block;width:100%;text-align:left;background:transparent;border:none;color:var(--text2);font-size:12px;font-weight:500;padding:9px 12px;border-radius:7px;cursor:pointer;transition:background var(--t),color var(--t);font-family:inherit}
+.sess-overflow-item:hover{background:var(--surface2);color:var(--text)}
+.sess-overflow-item.danger{color:var(--rose)}
+.sess-overflow-item.danger:hover{background:rgba(194,105,122,0.12);color:#E8A0AE}
+
+/* ---- SEND FEEDBACK REQUEST ---- */
+/* Pilot-feedback nudge for anyone who hasn't paid yet — same muted shape as
+   Mark Paid, just a different accent on hover so it doesn't look urgent. */
+.sess-feedback{animation:none;color:var(--text2);border-color:var(--border2);background:var(--surface3)}
+.sess-feedback:hover{background:var(--surface2);color:var(--gold-light)}
+
+/* ---- PAYMENT BANNER (active session card) ---- */
+.payment-banner{display:none;align-items:center;justify-content:space-between;gap:10px;background:var(--sage-dim);border:1px solid rgba(107,158,122,0.35);border-radius:12px;padding:12px 14px;margin-bottom:16px;animation:confirm-pulse 2.2s ease-in-out infinite}
+.payment-banner.show{display:flex}
+.payment-banner-text{font-size:13px;color:#9DC9A8;font-weight:600}
+.payment-banner-text small{display:block;font-size:11px;color:var(--text2);font-weight:400;margin-top:2px}
+.payment-banner-btn{font-size:12px;font-weight:700;color:#9DC9A8;cursor:pointer;letter-spacing:0.5px;border:1px solid rgba(107,158,122,0.4);border-radius:20px;padding:6px 14px;background:rgba(107,158,122,0.18);flex-shrink:0;transition:var(--t)}
+.payment-banner-btn:hover{background:rgba(107,158,122,0.3)}
+@keyframes banner-flash{0%,100%{outline-color:rgba(107,158,122,0)}30%{outline-color:rgba(107,158,122,0.9)}}
+.payment-banner.flash{outline:3px solid rgba(107,158,122,0);outline-offset:3px;animation:banner-flash 1.2s ease-out}
+
+/* ---- AI EDIT OWED BANNER (active session card) ---- */
+@keyframes ai-edit-pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,0.45)}50%{box-shadow:0 0 0 5px rgba(201,168,76,0)}}
+.ai-edit-banner{display:none;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.35);border-radius:12px;padding:12px 14px;margin-bottom:16px;animation:ai-edit-pulse 2.2s ease-in-out infinite}
+.ai-edit-banner.show{display:flex}
+.ai-edit-banner-text{font-size:13px;color:var(--gold);font-weight:600}
+.ai-edit-banner-text small{display:block;font-size:11px;color:var(--text2);font-weight:400;margin-top:2px}
+.ai-edit-banner-actions{display:flex;gap:8px;flex-shrink:0}
+.ai-edit-banner-btn{font-size:12px;font-weight:700;color:var(--gold);cursor:pointer;letter-spacing:0.5px;border:1px solid rgba(201,168,76,0.4);border-radius:20px;padding:6px 14px;background:rgba(201,168,76,0.15);flex-shrink:0;transition:var(--t)}
+.ai-edit-banner-btn:hover{background:rgba(201,168,76,0.28)}
+.ai-edit-banner-btn.uploading{opacity:0.6;pointer-events:none}
+.ai-edit-banner-btn.copied{background:var(--sage-dim);color:var(--sage);border-color:rgba(107,158,122,0.4)}
+.ai-edit-banner-prompt{flex:1 1 100%;font-size:11px;color:var(--text2);line-height:1.6;background:rgba(0,0,0,0.18);border-radius:8px;padding:10px 12px;margin-top:4px}
+
+/* ---- NOTIFY CLIENT EMPHASIS ---- */
+@keyframes notify-pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,0.45)}50%{box-shadow:0 0 0 5px rgba(201,168,76,0)}}
+.notify-pulse{animation:notify-pulse 2.2s ease-in-out infinite}
+.notify-pulse:hover{animation-play-state:paused}
+
+/* ---- BUTTON MICRO-INTERACTIONS ---- */
+.btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 18px rgba(201,168,76,0.25)}
+.btn-primary:active:not(:disabled){transform:scale(0.98)}
+.btn-secondary:hover{transform:translateY(-1px)}
+.btn-secondary:active{transform:scale(0.97)}
+
+/* ---- REVENUE COUNT-UP POP ---- */
+.rev-num{transition:transform 0.3s cubic-bezier(.34,1.56,.64,1)}
+.rev-num.bump{transform:scale(1.12)}
+
+/* ---- ACTIVE SESSION CARD ---- */
+.session-active.show{animation:item-in .5s cubic-bezier(.16,1,.3,1) both}
+
+/* ---- THUMBNAIL LIGHTBOX ---- */
+.thumb-lightbox{display:none;position:fixed;inset:0;background:rgba(8,8,8,0.92);z-index:999;align-items:center;justify-content:center;padding:24px;cursor:zoom-out}
+.thumb-lightbox.show{display:flex;animation:item-in .3s cubic-bezier(.16,1,.3,1)}
+.thumb-lightbox img, .thumb-lightbox video{max-width:100%;max-height:90vh;border-radius:10px;border:1px solid var(--border2);cursor:default}
+.thumb-lightbox-close{position:absolute;top:18px;right:22px;font-size:28px;color:var(--text2);cursor:pointer;line-height:1;transition:var(--t)}
+.thumb-lightbox-close:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<!-- AMBIENT BACKGROUND -->
+<div class="bg-fx" aria-hidden="true">
+  <div class="bg-glow bg-glow-gold"></div>
+  <div class="bg-glow bg-glow-rose"></div>
+  <div class="bg-glow bg-glow-sage"></div>
+  <div id="sparkleField"></div>
+</div>
+
+<!-- LOADING -->
+<div id="loadingScreen">
+  <div class="load-mark">ATCHÉ</div>
+  <div class="load-sub">Loading Studio…</div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen" style="display:none">
+  <div class="av-logo">
+    <span class="av-wordmark">ATCHÉ VISUALS</span>
+    <div class="av-sub">Studio</div>
+    <div class="av-rule"></div>
+    <div class="av-tagline">Photographer Access · Washington DC</div>
+  </div>
+  <div class="login-card">
+    <h2 id="loginTitle">Welcome Back</h2>
+    <p id="loginSub">Sign in to start tonight's sessions</p>
+    <div class="auth-err" id="authErr"></div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="loginEmail" placeholder="you@email.com" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="loginPass" placeholder="••••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-primary" id="loginBtn" onclick="doLogin()">Sign In</button>
+    <div class="auth-loading" id="authLoading">Authenticating…</div>
+    <div class="auth-switch" id="authSwitch">
+      Don't have an account? <a onclick="toggleMode()">Create one</a>
+    </div>
+    <div class="auth-switch" id="forgotPwLink" style="margin-top:6px">
+      <a onclick="forgotPassword()">Forgot your password?</a>
+    </div>
+  </div>
+</div>
+
+<!-- STUDIO -->
+<div id="studioScreen">
+  <div class="wrap">
+    <div class="av-header">
+      <span class="av-wordmark" style="font-size:32px">ATCHÉ VISUALS</span>
+      <div class="av-sub">Studio</div>
+      <div class="av-rule"></div>
+      <div class="av-header-user">Signed in as <span id="userEmail">–</span> · <a onclick="doSignOut()" class="sign-out-link" role="button" tabindex="0">Sign out</a></div>
+    </div>
+
+    <!-- TONIGHT'S NUMBERS -->
+    <div class="card reveal">
+      <span class="step-tag">Tonight</span>
+      <h2>Sessions &amp; Revenue</h2>
+      <div class="rev-row">
+        <div class="rev-box">
+          <div class="rev-num" id="revTotal"><span class="rev-skel"></span></div>
+          <div class="rev-label">Paid Tonight</div>
+        </div>
+        <div class="rev-box">
+          <div class="rev-num" id="revSessions"><span class="rev-skel"></span></div>
+          <div class="rev-label">Sessions Tonight</div>
+        </div>
+        <div class="rev-box">
+          <div class="rev-num" id="revPending"><span class="rev-skel"></span></div>
+          <div class="rev-label">Awaiting Payment</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW SESSION -->
+    <div class="card reveal">
+      <span class="step-tag">New Door</span>
+      <h2>Start a client session</h2>
+      <p class="card-desc">One session = one client/group/performer. You upload their shots here; they get a private link + QR to pick, pay, and download on their own phone.</p>
+      <div class="row">
+        <input class="form-input" id="newLabel" type="text" placeholder="Use a name they'll recognize (e.g. &quot;Jasmine&quot;, &quot;Tiffany + friends&quot;) — optional">
+        <input class="form-input" id="newContact" type="text" placeholder="IG handle, phone, or email — optional" style="max-width:200px">
+      </div>
+      <p class="card-desc" style="margin:8px 0 0">The label is what they'll see in their "Hey ___" notification, so a name beats "Table 4." Contact lets you follow up if they don't unlock or download tonight — if it's a phone number, "Notify Client" texts them the link; if it's an email, it opens a pre-filled email instead. Both optional.</p>
+      <button class="btn-primary" style="width:100%;margin-top:10px" onclick="createSession()">Create Session</button>
+    </div>
+
+    <!-- ACTIVE SESSION -->
+    <div class="card session-active" id="activeCard">
+      <span class="step-tag">Client Door — Open</span>
+      <h2 style="text-align:center;margin-bottom:14px">Hand this to your client</h2>
+      <div class="session-code" id="activeCode">—</div>
+      <div class="session-label" id="activeLabel"></div>
+      <div class="payment-banner" id="paymentBanner">
+        <div class="payment-banner-text">💰 Client says they paid<small id="paymentBannerAmt"></small></div>
+        <div class="payment-banner-btn" id="paymentBannerBtn">Confirm Paid</div>
+      </div>
+      <div class="ai-edit-banner" id="aiEditBanner">
+        <div class="ai-edit-banner-text">✨ AI Edit owed — <span id="aiEditBannerTheme"></span><small id="aiEditBannerPhoto"></small></div>
+        <div class="ai-edit-banner-actions">
+          <span class="ai-edit-banner-btn" id="aiEditCopyPromptBtn" onclick="copyAiEditPrompt()">📋 Copy Prompt</span>
+          <label class="ai-edit-banner-btn" id="aiEditBannerBtn" for="aiEditUploadInput">Upload AI Edit</label>
+          <input type="file" id="aiEditUploadInput" accept="image/*" style="display:none">
+        </div>
+        <div class="ai-edit-banner-prompt" id="aiEditBannerPrompt"></div>
+      </div>
+      <div class="share-box">
+        <div class="share-qr"><img id="shareQr" alt="Session QR code"></div>
+        <div class="share-info">
+          <div class="share-link" id="shareLink">—</div>
+          <button class="btn-secondary" onclick="copyLink(event)">Copy Link</button>
+          <button class="btn-secondary" id="notifyBtn" onclick="notifyClient()" style="margin-left:6px" aria-label="Notify Client">📩 Notify Client</button>
+        </div>
+      </div>
+      <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <span class="drop-zone-icon">📷</span>
+        <div class="drop-zone-text">Tap to upload</div>
+        <div class="drop-zone-sub">Watermarked previews generate instantly · JPG, PNG, MP4</div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*,video/*" multiple>
+      <div class="thumb-grid" id="thumbGrid"></div>
+      <div class="upload-status" id="uploadStatus"></div>
+      <div class="close-session-row">
+        <button class="close-session-btn" onclick="closeSessionConfirm()">Close Session</button>
+      </div>
+    </div>
+
+    <!-- THUMBNAIL LIGHTBOX -->
+    <div class="thumb-lightbox" id="thumbLightbox" onclick="closeThumbLightbox(event)">
+      <span class="thumb-lightbox-close" onclick="closeThumbLightbox(event)" role="button" tabindex="0" aria-label="Close preview">✕</span>
+      <img id="thumbLightboxImg" alt="Full-size preview" style="display:none">
+      <video id="thumbLightboxVideo" controls style="display:none"></video>
+    </div>
+
+    <!-- SESSION LIST -->
+    <div class="card reveal">
+      <span class="step-tag">All Sessions</span>
+      <h2>Tonight's doors</h2>
+      <div id="sessList"><div class="sess-empty">No sessions yet — create one above.</div></div>
+    </div>
+
+    <div class="av-footer">
+      <a onclick="window.open('https://atche-visuals.atcheofficial.com/','_blank')">↗ Client Door Preview</a>
+      <span style="color:var(--border2)">·</span>
+      <a onclick="doSignOut()">Sign Out</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB_URL = 'https://aayigsbmmdolvnicxacs.supabase.co';
+const SB_KEY = 'sb_publishable_ofAZ_64cKZXJefM5nbbt3g_wNOoF5DC';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+const BUCKET = 'visuals';
+
+// ---- MODAL + TOAST SYSTEM ----
+let _cmResolve = null;
+
+function showModal(opts){
+  // opts: { title, body, confirm, cancel, danger, fields:[{key,label,placeholder,type}] }
+  return new Promise(resolve => {
+    _cmResolve = resolve;
+    const overlay = document.getElementById('cmOverlay');
+    document.getElementById('cmTitle').textContent = opts.title || '';
+    document.getElementById('cmBody').textContent = opts.body || '';
+
+    const fieldsEl = document.getElementById('cmFields');
+    fieldsEl.innerHTML = '';
+    if(opts.fields && opts.fields.length){
+      opts.fields.forEach(f => {
+        const g = document.createElement('div'); g.className = 'cm-field-group';
+        const lbl = document.createElement('label'); lbl.className = 'cm-field-label'; lbl.textContent = f.label; lbl.htmlFor = 'cm_' + f.key;
+        const inp = document.createElement('input'); inp.className = 'cm-field-input'; inp.id = 'cm_' + f.key; inp.placeholder = f.placeholder || ''; inp.type = f.type || 'text'; inp.dataset.key = f.key;
+        g.appendChild(lbl); g.appendChild(inp); fieldsEl.appendChild(g);
+      });
+    }
+
+    const actionsEl = document.getElementById('cmActions');
+    actionsEl.innerHTML = '';
+    if(opts.cancel !== false){
+      const btnC = document.createElement('button'); btnC.className = 'cm-cancel'; btnC.textContent = opts.cancel || 'Cancel';
+      btnC.onclick = () => { closeModal(); resolve(null); };
+      actionsEl.appendChild(btnC);
+    }
+    const btnOk = document.createElement('button');
+    btnOk.className = 'cm-confirm' + (opts.danger ? ' danger' : '');
+    btnOk.textContent = opts.confirm || 'OK';
+    btnOk.onclick = () => {
+      const result = {};
+      if(opts.fields && opts.fields.length){
+        opts.fields.forEach(f => { result[f.key] = document.getElementById('cm_' + f.key).value.trim(); });
+        closeModal(); resolve(result);
+      } else {
+        closeModal(); resolve(true);
+      }
+    };
+    actionsEl.appendChild(btnOk);
+
+    overlay.classList.add('show');
+    // Focus first input or confirm button
+    requestAnimationFrame(() => {
+      const first = fieldsEl.querySelector('input');
+      if(first) first.focus(); else btnOk.focus();
+    });
+  });
+}
+
+function closeModal(){
+  document.getElementById('cmOverlay').classList.remove('show');
+  document.getElementById('cmFields').innerHTML = '';
+  _cmResolve = null;
+}
+
+// Close modal on overlay click + close overflow menus on outside click
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('cmOverlay').addEventListener('click', e => {
+    if(e.target === document.getElementById('cmOverlay')){ closeModal(); if(_cmResolve) _cmResolve(null); }
+  });
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.sess-overflow-menu.open').forEach(m => {
+      m.classList.remove('open');
+      const btn = m.previousElementSibling;
+      if(btn) btn.setAttribute('aria-expanded','false');
+    });
+  });
+});
+
+let _toastTimer = null;
+function showToast(msg, type = ''){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' ' + type : '');
+  t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ---- WATERMARKED PREVIEWS ----
+// Every upload is stored twice: the original (untouched) goes to `full/`,
+// and an auto-watermarked, downsized preview goes to `preview/`. The client
+// gallery only ever displays the watermarked preview — the clean original
+// unlocks on download once payment is confirmed.
+const WM_TEXT = 'ATCHÉ VISUALS';
+
+async function ensureFonts(){
+  try{
+    await document.fonts.load("700 32px 'Playfair Display'");
+    await document.fonts.load("400 16px 'Playfair Display'");
+  }catch(e){ /* falls back to default serif if fonts aren't ready */ }
+}
+
+function drawWatermark(ctx, w, h){
+  // Diagonal repeating wordmark across the whole frame
+  ctx.save();
+  const tileFont = Math.max(18, Math.round(w * 0.034));
+  ctx.font = `700 ${tileFont}px 'Playfair Display', serif`;
+  ctx.fillStyle = 'rgba(242,237,230,0.16)';
+  ctx.strokeStyle = 'rgba(8,8,8,0.16)';
+  ctx.lineWidth = Math.max(1, tileFont * 0.04);
+  ctx.textBaseline = 'middle';
+  ctx.translate(w/2, h/2);
+  ctx.rotate(-Math.PI/8);
+  ctx.translate(-w/2, -h/2);
+  const textW = ctx.measureText(WM_TEXT).width;
+  const gapX = textW + w * 0.14;
+  const gapY = h * 0.16;
+  const span = Math.ceil(Math.sqrt(w*w + h*h));
+  for(let y = -span; y < h + span; y += gapY){
+    for(let x = -span; x < w + span; x += gapX){
+      ctx.strokeText(WM_TEXT, x, y);
+      ctx.fillText(WM_TEXT, x, y);
+    }
+  }
+  ctx.restore();
+
+  // Bottom-right brand mark, on a dark pill so it reads on any photo
+  ctx.save();
+  const pad = Math.round(w * 0.028);
+  const markFont = Math.max(18, Math.round(w * 0.038));
+  ctx.font = `700 ${markFont}px 'Playfair Display', serif`;
+  const markW = ctx.measureText(WM_TEXT).width;
+  const pillPadX = markFont * 0.5;
+  const pillPadY = markFont * 0.45;
+  ctx.fillStyle = 'rgba(8,8,8,0.35)';
+  ctx.fillRect(w - pad - markW - pillPadX*2, h - pad - markFont - pillPadY*1.4, markW + pillPadX*2, markFont + pillPadY*1.8);
+  ctx.fillStyle = 'rgba(242,237,230,0.85)';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(WM_TEXT, w - pad - pillPadX, h - pad - pillPadY*0.6);
+  ctx.restore();
+}
+
+function drawPlayBadge(ctx, w, h){
+  const r = Math.round(Math.min(w,h) * 0.09);
+  const cx = w/2, cy = h/2;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(8,8,8,0.45)';
+  ctx.fill();
+  ctx.beginPath();
+  const t = r * 0.55;
+  ctx.moveTo(cx - t*0.5, cy - t*0.9);
+  ctx.lineTo(cx - t*0.5, cy + t*0.9);
+  ctx.lineTo(cx + t*0.95, cy);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(242,237,230,0.95)';
+  ctx.fill();
+  ctx.restore();
+}
+
+function loadImageFromFile(file){
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { resolve(img); URL.revokeObjectURL(url); };
+    img.onerror = (e) => { URL.revokeObjectURL(url); reject(e); };
+    img.src = url;
+  });
+}
+
+function canvasToBlob(canvas, type, quality){
+  return new Promise((resolve, reject) => canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob failed')), type, quality));
+}
+
+function fitDims(w, h, maxDim){
+  if(w > h && w > maxDim) return { width: maxDim, height: Math.round(h * maxDim / w) };
+  if(h >= w && h > maxDim) return { width: Math.round(w * maxDim / h), height: maxDim };
+  return { width: w, height: h };
+}
+
+// Watermarked, downsized preview for a photo
+async function makeImagePreview(file, maxDim = 1280){
+  const img = await loadImageFromFile(file);
+  const { width, height } = fitDims(img.naturalWidth, img.naturalHeight, maxDim);
+  const canvas = document.createElement('canvas');
+  canvas.width = width; canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, width, height);
+  await ensureFonts();
+  drawWatermark(ctx, width, height);
+  return canvasToBlob(canvas, 'image/jpeg', 0.82);
+}
+
+// Watermarked poster frame for a video
+async function makeVideoPreview(file, maxDim = 1280){
+  const url = URL.createObjectURL(file);
+  const video = document.createElement('video');
+  video.muted = true;
+  video.playsInline = true;
+  video.preload = 'auto';
+  video.src = url;
+  await new Promise((resolve, reject) => {
+    video.onloadeddata = resolve;
+    video.onerror = reject;
+  });
+  await new Promise(resolve => {
+    video.onseeked = resolve;
+    video.currentTime = Math.min(0.4, (video.duration || 1) / 2);
+  });
+  const { width, height } = fitDims(video.videoWidth, video.videoHeight, maxDim);
+  const canvas = document.createElement('canvas');
+  canvas.width = width; canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, width, height);
+  await ensureFonts();
+  drawWatermark(ctx, width, height);
+  drawPlayBadge(ctx, width, height);
+  URL.revokeObjectURL(url);
+  return canvasToBlob(canvas, 'image/jpeg', 0.82);
+}
+
+let isSignup = false;
+let currentUser = null;
+let activeSession = null; // {id, code, label}
+
+// ---- AUTH ----
+function toggleMode() {
+  isSignup = !isSignup;
+  document.getElementById('loginTitle').textContent = isSignup ? 'Create Account' : 'Welcome Back';
+  document.getElementById('loginSub').textContent = isSignup ? 'Set up your ATCHÉ Visuals access' : "Sign in to start tonight's sessions";
+  document.getElementById('loginBtn').textContent = isSignup ? 'CREATE ACCOUNT' : 'Sign In';
+  document.getElementById('authSwitch').innerHTML = isSignup
+    ? 'Already have an account? <a onclick="toggleMode()">Sign in</a>'
+    : "Don't have an account? <a onclick=\"toggleMode()\">Create one</a>";
+  hideErr();
+}
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  if(!email||!pass){ showErr('Enter your email and password.'); return; }
+  document.getElementById('loginBtn').disabled = true;
+  document.getElementById('authLoading').style.display = 'block';
+  hideErr();
+  const fn = isSignup
+    ? sb.auth.signUp({ email, password: pass })
+    : sb.auth.signInWithPassword({ email, password: pass });
+  const { data, error } = await fn;
+  document.getElementById('loginBtn').disabled = false;
+  document.getElementById('authLoading').style.display = 'none';
+  if(error){ showErr(error.message); return; }
+  if(isSignup && data.user && !data.session){
+    showErr('Account created. Check your email to confirm, then sign in.');
+    return;
+  }
+  if(data.session) showStudio(data.session.user);
+}
+
+async function doSignOut() {
+  await sb.auth.signOut();
+  document.getElementById('studioScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'block';
+}
+
+function showErr(msg){ const e=document.getElementById('authErr'); e.textContent=msg; e.style.display='block'; }
+function hideErr(){ document.getElementById('authErr').style.display='none'; }
+
+// ---- AMBIENT BACKGROUND FX ----
+function initBgFx(){
+  const field = document.getElementById('sparkleField');
+  if(field && !field.dataset.ready){
+    field.dataset.ready = '1';
+    const n = 14;
+    for(let i=0;i<n;i++){
+      const s = document.createElement('div');
+      s.className = 'spark';
+      const size = 2 + Math.random()*3;
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.left = Math.random()*100 + '%';
+      s.style.top = Math.random()*100 + '%';
+      s.style.animationDuration = (10 + Math.random()*14) + 's';
+      s.style.animationDelay = (Math.random()*10) + 's';
+      field.appendChild(s);
+    }
+  }
+  if(!window.__bgFxScroll){
+    window.__bgFxScroll = true;
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if(ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        document.documentElement.style.setProperty('--py1', (y * 0.08) + 'px');
+        document.documentElement.style.setProperty('--py2', (y * -0.05) + 'px');
+        document.documentElement.style.setProperty('--py3', (y * 0.04) + 'px');
+        ticking = false;
+      });
+    });
+  }
+}
+
+// ---- SCROLL REVEAL ----
+function initReveal(){
+  const els = document.querySelectorAll('.reveal');
+  function check(){
+    const vh = window.innerHeight;
+    els.forEach(el => {
+      if(el.classList.contains('visible')) return;
+      const r = el.getBoundingClientRect();
+      if(r.top < vh * 0.92) el.classList.add('visible');
+    });
+  }
+  check();
+  window.addEventListener('scroll', check);
+  window.addEventListener('resize', check);
+}
+
+async function boot() {
+  const { data: { session } } = await sb.auth.getSession();
+  document.getElementById('loadingScreen').style.display = 'none';
+  initBgFx();
+  if(session){ showStudio(session.user); }
+  else { document.getElementById('loginScreen').style.display = 'block'; }
+}
+
+function showStudio(user) {
+  currentUser = user;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('studioScreen').style.display = 'block';
+  document.getElementById('userEmail').textContent = user.email;
+  loadSessions();
+  initBgFx();
+  initReveal();
+  // Poll so "Confirm Paid" requests from clients show up without a manual refresh.
+  setInterval(loadSessions, 8000);
+}
+
+function esc(str){
+  if(str == null) return '';
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function setStat(id, value){
+  const el = document.getElementById(id);
+  const next = String(value);
+  // Clear skeleton on first real data
+  const skel = el.querySelector('.rev-skel');
+  if(skel) skel.remove();
+  if(el.textContent === next) return;
+  el.textContent = next;
+  el.classList.remove('bump');
+  void el.offsetWidth;
+  el.classList.add('bump');
+  setTimeout(() => el.classList.remove('bump'), 300);
+}
+
+// ---- SESSIONS ----
+function genCode(){
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  let c = '';
+  for(let i=0;i<5;i++) c += chars[Math.floor(Math.random()*chars.length)];
+  return c;
+}
+
+const CLIENT_GALLERY_BASE = 'https://atche-visuals.atcheofficial.com/';
+
+function clientLink(code){
+  return CLIENT_GALLERY_BASE + '?s=' + code;
+}
+
+function feedbackLink(code){
+  return CLIENT_GALLERY_BASE + 'atche-visuals-feedback.html?s=' + code;
+}
+
+// ---- AI EDIT GENERATION PROMPTS ----
+// Non-destructive / editorial: every prompt leads with an explicit instruction
+// to preserve the subject's face, identity, skin tone, pose, and outfit, then
+// only describes changes to the environment, lighting, and added props. This
+// is the prompt text staff pastes into the generation tool (Higgsfield or
+// similar) when fulfilling an AI Edit. Keys match the `name` field in
+// AI_EDIT_THEMES (atche-visuals.html).
+const AI_EDIT_PROMPTS = {
+  'Your Name in Lights':
+    "Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. " +
+    "Replace only the background and environment: place them at the base of a massive illuminated marquee or LED billboard with their name glowing large in the sky; surrounding neon signs, concert stage energy, and a crowd of bokeh lights create a star-is-born atmosphere. " +
+    "Light the subject with the warm, colorful glow of neon and marquee lights from above. Finish with a vibrant editorial grade — punchy but true-to-skin, no smoothing or reshaping.",
+
+  'Private Jet':
+    "Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features or proportions, and keep their outfit unchanged. " +
+    "Replace only the background and environment: place them on a private jet tarmac at golden hour, with a sleek private jet behind them and designer luggage nearby; if their pose allows, add a glass of champagne naturally in hand. " +
+    "Light the subject to match the warm golden-hour environment with soft, flattering falloff and shallow depth of field. Finish with a polished, editorial color grade — crisp but natural, no skin smoothing or body reshaping.",
+
+  'Sports Car':
+    "Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. " +
+    "Replace only the background and environment: place them beside or in front of a sleek, gleaming supercar (Lamborghini or Ferrari aesthetic) parked on an open coastal road or city street at golden hour; environment should feel aspirational and cinematic. " +
+    "Light the subject with warm directional golden-hour light, subtle reflections from the car's metallic surface. Finish with a high-contrast, editorial grade — vivid and sharp, no skin smoothing or body reshaping.",
+
+  'VIP Section':
+    "Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. " +
+    "Replace only the background and environment: a luxurious nightclub VIP section — plush velvet seating, bottle service with sparklers on a nearby table, low warm accent lighting, a glowing dancefloor visible in the background. The subject is clearly the one everyone came to see. " +
+    "Light the subject with the rich, moody warmth of club ambient lighting. Finish with a sophisticated editorial grade — glamorous but not garish, no skin smoothing or body reshaping.",
+
+  'Penthouse Night':
+    "Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. " +
+    "Replace only the background and environment: a glowing penthouse lounge at night with floor-to-ceiling windows overlooking a city skyline, warm ambient interior light, soft bokeh city lights in the distance. " +
+    "Relight the subject to feel naturally lit by the room's warm glow with subtle cool reflections from the skyline. Finish with rich, moody editorial color grading and a clean, magazine-quality composition — no skin smoothing or body reshaping.",
+
+  'Red Carpet':
+    "Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. " +
+    "Replace only the background and environment: a step-and-repeat red carpet backdrop with a subtle premiere-branding pattern, plus soft paparazzi-style flash highlights/light flares around the frame edges as if caught mid-photo at a premiere. " +
+    "Apply crisp, high-contrast editorial lighting consistent with red carpet event photography. Finish polished and magazine-ready — no skin smoothing or body reshaping."
+};
+
+async function createSession(){
+  const label = document.getElementById('newLabel').value.trim();
+  const contact = document.getElementById('newContact').value.trim();
+  const code = genCode();
+  const { data, error } = await sb.from('visuals_sessions').insert({
+    code, label, contact, user_id: currentUser.id, status: 'active'
+  }).select().single();
+  if(error){ showToast('Could not create session — ' + error.message, 'error'); return; }
+  document.getElementById('newLabel').value = '';
+  document.getElementById('newContact').value = '';
+  openSession(data);
+  loadSessions();
+}
+
+function openSession(session){
+  activeSession = session;
+  const activeCard = document.getElementById('activeCard');
+  activeCard.style.display = 'block';
+  activeCard.classList.remove('show');
+  void activeCard.offsetWidth;
+  activeCard.classList.add('show');
+  document.getElementById('activeCode').textContent = session.code;
+  document.getElementById('activeLabel').textContent = session.label || '';
+  const link = clientLink(session.code);
+  document.getElementById('shareLink').textContent = link;
+  document.getElementById('shareQr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=6&data=' + encodeURIComponent(link);
+  document.getElementById('thumbGrid').innerHTML = '';
+  document.getElementById('uploadStatus').textContent = '';
+  loadThumbs();
+  updatePaymentBanner();
+  updateAiEditBanner();
+
+  // Scroll so the relevant info is actually visible: if this session needs
+  // a payment confirmation, jump straight to that banner (and flash it) so
+  // staff can act on it immediately — otherwise just scroll to the top of
+  // the card. Deferred a tick so layout reflects the banner's new display
+  // state before we measure scroll position.
+  requestAnimationFrame(() => {
+    const banner = document.getElementById('paymentBanner');
+    if(banner.classList.contains('show')){
+      banner.scrollIntoView({behavior:'smooth', block:'center'});
+      banner.classList.remove('flash');
+      void banner.offsetWidth;
+      banner.classList.add('flash');
+    } else {
+      document.getElementById('activeCard').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+}
+
+// ---- PAYMENT BANNER ----
+// Shows a prominent "Confirm Paid" prompt right on the active session card
+// when the client has tapped "I've sent payment" — so staff don't have to
+// hunt for the pill in the session list below.
+function updatePaymentBanner(){
+  const banner = document.getElementById('paymentBanner');
+  if(!activeSession){ banner.classList.remove('show'); return; }
+  const needsConfirm = activeSession.payment_requested && !activeSession.paid;
+  if(!needsConfirm){ banner.classList.remove('show'); return; }
+  document.getElementById('paymentBannerAmt').textContent =
+    activeSession.package_price ? `${activeSession.package_name || 'Package'} — $${activeSession.package_price}` : 'Tap to unlock their download';
+  document.getElementById('paymentBannerBtn').onclick = () => markPaid(activeSession);
+  banner.classList.add('show');
+}
+
+// ---- AI EDIT OWED BANNER ----
+// Shows once a client's payment (including their AI-Enhanced Edit add-on)
+// has been confirmed but the edit hasn't been delivered yet. Tells staff
+// which theme + which uploaded photo to base the edit on, and lets them
+// drop the finished file straight into <code>/ai/ once it's ready.
+function updateAiEditBanner(){
+  const banner = document.getElementById('aiEditBanner');
+  if(!activeSession){ banner.classList.remove('show'); return; }
+  const needsAiEdit = activeSession.paid && activeSession.ai_edit_requested && !activeSession.ai_edit_delivered;
+  if(!needsAiEdit){ banner.classList.remove('show'); return; }
+  document.getElementById('aiEditBannerTheme').textContent = activeSession.ai_edit_theme || 'AI-Enhanced Edit';
+  document.getElementById('aiEditBannerPhoto').textContent = activeSession.ai_edit_photo
+    ? `Base it on: ${activeSession.ai_edit_photo}`
+    : '';
+
+  // Show the non-destructive/editorial generation prompt for this theme so
+  // staff can paste it straight into Higgsfield (or whatever they're using)
+  // without hunting for it elsewhere.
+  const promptEl = document.getElementById('aiEditBannerPrompt');
+  const copyBtn = document.getElementById('aiEditCopyPromptBtn');
+  const prompt = AI_EDIT_PROMPTS[activeSession.ai_edit_theme];
+  if(prompt){
+    promptEl.textContent = prompt;
+    promptEl.style.display = 'block';
+    copyBtn.style.display = '';
+  } else {
+    promptEl.style.display = 'none';
+    copyBtn.style.display = 'none';
+  }
+  copyBtn.classList.remove('copied');
+  copyBtn.textContent = '📋 Copy Prompt';
+
+  banner.classList.add('show');
+}
+
+// Copies the generation prompt for the active session's AI Edit theme to the
+// clipboard so staff can paste it directly into their image-gen tool.
+async function copyAiEditPrompt(){
+  if(!activeSession) return;
+  const prompt = AI_EDIT_PROMPTS[activeSession.ai_edit_theme];
+  if(!prompt) return;
+  try{
+    await navigator.clipboard.writeText(prompt);
+  }catch(e){
+    // Clipboard unavailable — show toast; user can long-press the prompt text
+    showToast('Clipboard unavailable — tap and hold the prompt to copy it', 'error');
+    return;
+  }
+  const copyBtn = document.getElementById('aiEditCopyPromptBtn');
+  copyBtn.textContent = '✓ Copied';
+  copyBtn.classList.add('copied');
+  setTimeout(() => {
+    copyBtn.textContent = '📋 Copy Prompt';
+    copyBtn.classList.remove('copied');
+  }, 2000);
+}
+
+async function closeSessionConfirm(){
+  if(!activeSession) return;
+  const label = activeSession.label ? ` for ${activeSession.label}` : '';
+  const needsConfirm = activeSession.payment_requested && !activeSession.paid;
+  const pendingWarn = needsConfirm ? ` ⚠️ This client has sent a payment request that hasn't been confirmed yet. Closing now will prevent them from unlocking their download.` : '';
+  const confirmed = await showModal({
+    title: 'Close Session',
+    body: `Mark session ${activeSession.code}${label} as closed? Clients can no longer tap "I've sent payment" — you can reopen it from the session list if needed.${pendingWarn}`,
+    confirm: 'Close Session',
+    cancel: 'Not Yet'
+  });
+  if(!confirmed) return;
+  closeSession();
+}
+
+async function closeSession(){
+  if(!activeSession) return;
+  await sb.from('visuals_sessions').update({status:'closed'}).eq('id', activeSession.id);
+  document.getElementById('activeCard').style.display = 'none';
+  activeSession = null;
+  loadSessions();
+}
+
+async function loadSessions(){
+  const { data, error } = await sb.from('visuals_sessions')
+    .select('*').eq('user_id', currentUser.id)
+    .order('created_at', {ascending:false}).limit(50);
+  if(error || !data){ return; }
+
+  // Keep the active session card's data (and payment banner) in sync with
+  // the latest row, so a client's "I've sent payment" tap shows up here
+  // within one poll cycle (every 8s) without needing to reopen the session.
+  if(activeSession){
+    const fresh = data.find(s => s.id === activeSession.id);
+    if(fresh){ activeSession = fresh; updatePaymentBanner(); updateAiEditBanner(); }
+  }
+
+  const todayStr = new Date().toDateString();
+  const tonight = data.filter(s => new Date(s.created_at).toDateString() === todayStr);
+  const paidTotal = tonight.filter(s=>s.paid).reduce((sum,s)=>sum+(Number(s.package_price)||0)+(Number(s.ai_edit_price)||0),0);
+  const pending = tonight.filter(s=>!s.paid && s.status==='active').length;
+  setStat('revTotal', '$' + paidTotal);
+  setStat('revSessions', tonight.length);
+  setStat('revPending', pending);
+
+  const list = document.getElementById('sessList');
+  if(data.length === 0){
+    list.innerHTML = '<div class="sess-empty">No sessions yet — create one above.</div>';
+    return;
+  }
+  list.innerHTML = '';
+  data.forEach((s, idx) => {
+    const div = document.createElement('div');
+    div.className = 'sess-item';
+    div.style.setProperty('--d', (Math.min(idx, 10) * 0.04) + 's');
+    const time = new Date(s.created_at).toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+    let badge, badgeClass;
+    const needsConfirm = s.payment_requested && !s.paid;
+    const canManualPay = s.status === 'active' && !s.paid && !needsConfirm;
+    const canFeedback = !s.paid;
+    if(s.status === 'closed'){ badge = 'Closed'; badgeClass = 'badge-closed'; }
+    else if(s.paid){ badge = 'Paid $' + s.package_price; badgeClass = 'badge-paid'; }
+    else if(needsConfirm){ badge = 'Confirm $' + (s.package_price || 0); badgeClass = 'badge-pending'; }
+    else { badge = 'Awaiting'; badgeClass = 'badge-pending'; }
+
+    const hasOverflow = canFeedback || s.status === 'closed';
+    div.innerHTML = `
+      <div class="sess-code">${esc(s.code)}</div>
+      <div class="sess-meta">
+        <div class="sess-label">${esc(s.label) || '(no label)'}</div>
+        <div class="sess-time">${time}${s.contact ? ' · ' + esc(s.contact) : ''}</div>
+      </div>
+      <div class="sess-badge ${badgeClass}">${badge}</div>
+      ${needsConfirm ? `<div class="sess-confirm" data-id="${s.id}">Confirm Paid</div>` : ''}
+      ${canManualPay ? `<div class="sess-confirm sess-manual-pay" data-id="${s.id}">Mark Paid</div>` : ''}
+      <div class="sess-open" data-id="${s.id}">Open →</div>
+      ${hasOverflow ? `
+      <div class="sess-overflow">
+        <button class="sess-overflow-btn" aria-label="More actions" aria-expanded="false">···</button>
+        <div class="sess-overflow-menu">
+          ${canFeedback ? `<button class="sess-overflow-item sess-ov-feedback">Send Feedback</button>` : ''}
+          ${s.status === 'closed' ? `<button class="sess-overflow-item sess-ov-reopen">Reopen</button>` : ''}
+          ${s.status === 'closed' ? `<button class="sess-overflow-item danger sess-ov-delete">Delete</button>` : ''}
+        </div>
+      </div>` : ''}
+    `;
+    if(needsConfirm){
+      div.querySelector('.sess-confirm').onclick = (e) => { e.stopPropagation(); markPaid(s); };
+    }
+    if(canManualPay){
+      div.querySelector('.sess-manual-pay').onclick = (e) => { e.stopPropagation(); manualMarkPaid(s); };
+    }
+    div.querySelector('.sess-open').onclick = () => openSession(s);
+    if(hasOverflow){
+      const overflowBtn = div.querySelector('.sess-overflow-btn');
+      const overflowMenu = div.querySelector('.sess-overflow-menu');
+      overflowBtn.onclick = (e) => {
+        e.stopPropagation();
+        const isOpen = overflowMenu.classList.contains('open');
+        document.querySelectorAll('.sess-overflow-menu.open').forEach(m => {
+          m.classList.remove('open');
+          m.previousElementSibling.setAttribute('aria-expanded','false');
+        });
+        if(!isOpen){ overflowMenu.classList.add('open'); overflowBtn.setAttribute('aria-expanded','true'); }
+      };
+      if(canFeedback) div.querySelector('.sess-ov-feedback').onclick = (e) => { e.stopPropagation(); overflowMenu.classList.remove('open'); sendFeedbackRequest(s); };
+      if(s.status === 'closed'){
+        div.querySelector('.sess-ov-reopen').onclick = (e) => { e.stopPropagation(); overflowMenu.classList.remove('open'); reopenSession(s); };
+        div.querySelector('.sess-ov-delete').onclick = (e) => { e.stopPropagation(); overflowMenu.classList.remove('open'); deleteSession(s); };
+      }
+    }
+    list.appendChild(div);
+  });
+}
+
+// ---- PAYMENT CONFIRMATION ----
+// Clients can only flag "I sent payment" (sets payment_requested via RPC).
+// Only staff, signed in here, can flip `paid` — that's what actually unlocks
+// the client's download.
+async function markPaid(s){
+  const amt = s.package_price ? `$${s.package_price}` : 'this payment';
+  const confirmed = await showModal({
+    title: 'Confirm Payment',
+    body: `Confirm ${amt} received for ${s.code}? This unlocks their download immediately.`,
+    confirm: 'Confirm Paid',
+    cancel: 'Cancel'
+  });
+  if(!confirmed) return;
+  const { error } = await sb.from('visuals_sessions').update({
+    paid: true,
+    paid_at: new Date().toISOString(),
+    payment_requested: false
+  }).eq('id', s.id);
+  if(error){ showToast('Error: ' + error.message, 'error'); return; }
+  showToast(`${esc(s.code)}${s.package_price ? ' — $' + s.package_price : ''} confirmed ✓`, 'success');
+  loadSessions();
+}
+
+// ---- MANUAL MARK PAID (no client-side request) ----
+// For sessions where the client paid via Cash App but never tapped "I've
+// sent payment" in their gallery — staff sees the Cash App notification and
+// unlocks the download directly. Since the client never sent a package
+// name/price via request_payment_confirmation, ask for it here so revenue
+// totals and the unlocked download still reflect the right package.
+async function manualMarkPaid(s){
+  let pkgName = s.package_name || '';
+  let pkgPrice = s.package_price || 0;
+
+  if(!pkgPrice){
+    const result = await showModal({
+      title: 'Mark Paid Manually',
+      body: `${s.label || s.code} paid via Cash App but never tapped "I've sent payment." Enter the package details below — this unlocks their download immediately.`,
+      confirm: 'Mark Paid',
+      cancel: 'Cancel',
+      fields: [
+        { key: 'name', label: 'Package', placeholder: 'e.g. "3 Photos", "Reel + 3 Photos"', type: 'text' },
+        { key: 'price', label: 'Amount ($)', placeholder: '0', type: 'number' }
+      ]
+    });
+    if(!result) return;
+    pkgName = result.name || pkgName;
+    pkgPrice = Number(result.price) || 0;
+  } else {
+    const confirmed = await showModal({
+      title: 'Mark Paid Manually',
+      body: `Mark ${s.code} as paid${pkgName ? ` for "${pkgName}"` : ''}${pkgPrice ? ` — $${pkgPrice}` : ''}? This unlocks their download even though they never tapped "I've sent payment."`,
+      confirm: 'Mark Paid',
+      cancel: 'Cancel'
+    });
+    if(!confirmed) return;
+  }
+
+  const { error } = await sb.from('visuals_sessions').update({
+    paid: true,
+    paid_at: new Date().toISOString(),
+    payment_requested: false,
+    package_name: pkgName || s.package_name,
+    package_price: pkgPrice
+  }).eq('id', s.id);
+  if(error){ showToast('Error: ' + error.message, 'error'); return; }
+  loadSessions();
+}
+
+// ---- REOPEN ----
+// A closed session can't receive new "I've sent payment" requests (the RPC
+// only updates status='active' rows). Lets staff flip it back to active
+// from the session list if a client pays after the session was closed.
+async function reopenSession(s){
+  const { error } = await sb.from('visuals_sessions').update({status:'active'}).eq('id', s.id);
+  if(error){ showToast('Error: ' + error.message, 'error'); return; }
+  loadSessions();
+}
+
+// ---- DELETE OLD SESSION ----
+// Permanently removes a closed session: its row, plus every uploaded file
+// (full / preview / ai) for that code. Used to clear out old test sessions
+// or doors from past nights that are no longer needed.
+async function deleteSession(s){
+  const label = s.label ? ` (${s.label})` : '';
+  const confirmed = await showModal({
+    title: 'Delete Session',
+    body: `Permanently delete ${s.code}${label}? This removes all uploaded photos, reels, and AI edits — it cannot be undone.`,
+    confirm: 'Delete',
+    cancel: 'Cancel',
+    danger: true
+  });
+  if(!confirmed) return;
+
+  for(const sub of ['full','preview','ai']){
+    const { data } = await sb.storage.from(BUCKET).list(`${s.code}/${sub}`, {limit:500});
+    if(data && data.length){
+      const paths = data.filter(f => f.name !== '.emptyFolderPlaceholder').map(f => `${s.code}/${sub}/${f.name}`);
+      if(paths.length) await sb.storage.from(BUCKET).remove(paths);
+    }
+  }
+
+  const { error } = await sb.from('visuals_sessions').delete().eq('id', s.id);
+  if(error){ showToast('Error: ' + error.message, 'error'); return; }
+
+  if(activeSession && activeSession.id === s.id){
+    document.getElementById('activeCard').style.display = 'none';
+    activeSession = null;
+  }
+  loadSessions();
+}
+
+// ---- AI EDIT UPLOAD ----
+// Staff drops the finished AI-Enhanced Edit (from Higgsfield or similar)
+// into <code>/ai/ and flips ai_edit_delivered=true — the client's gallery
+// picks it up on its next poll.
+const aiEditUploadInput = document.getElementById('aiEditUploadInput');
+aiEditUploadInput.addEventListener('change', e => handleAiEditUpload(e.target.files));
+
+async function handleAiEditUpload(fileList){
+  if(!activeSession) return;
+  const file = fileList[0];
+  if(!file) return;
+
+  const btn = document.getElementById('aiEditBannerBtn');
+  const orig = btn.textContent;
+  btn.textContent = 'Uploading…';
+  btn.classList.add('uploading');
+
+  const code = activeSession.code;
+  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  const filename = `ai-edit-${Date.now()}.${ext}`;
+
+  const { error: e1 } = await sb.storage.from(BUCKET)
+    .upload(`${code}/ai/${filename}`, file, { upsert: true });
+  if(e1){
+    showToast('Upload error — ' + e1.message, 'error');
+    btn.textContent = orig;
+    btn.classList.remove('uploading');
+    return;
+  }
+
+  const { error: e2 } = await sb.from('visuals_sessions').update({
+    ai_edit_delivered: true,
+    ai_edit_delivered_at: new Date().toISOString()
+  }).eq('id', activeSession.id);
+  if(e2){
+    showToast('Uploaded, but failed to mark delivered — ' + e2.message, 'error');
+    btn.textContent = orig;
+    btn.classList.remove('uploading');
+    return;
+  }
+
+  activeSession.ai_edit_delivered = true;
+  btn.textContent = orig;
+  btn.classList.remove('uploading');
+  updateAiEditBanner();
+  loadSessions();
+}
+
+// ---- UPLOAD ----
+const fileInput = document.getElementById('fileInput');
+const dropZone = document.getElementById('dropZone');
+
+fileInput.addEventListener('change', e => handleFiles(e.target.files));
+['dragover','dragleave','drop'].forEach(evt => {
+  dropZone.addEventListener(evt, e => {
+    e.preventDefault();
+    if(evt==='dragover') dropZone.classList.add('drag');
+    else dropZone.classList.remove('drag');
+    if(evt==='drop') handleFiles(e.dataTransfer.files);
+  });
+});
+
+async function handleFiles(fileList){
+  if(!activeSession) return;
+  const files = Array.from(fileList);
+  const status = document.getElementById('uploadStatus');
+  const code = activeSession.code;
+
+  for(let i=0;i<files.length;i++){
+    const file = files[i];
+    const isVideo = file.type.startsWith('video/') || /\.(mp4|mov|webm)$/i.test(file.name);
+    const baseName = `${Date.now()}_${i}_${file.name}`;
+
+    status.textContent = `Processing ${i+1} of ${files.length}…`;
+    let previewBlob = null;
+    try{
+      previewBlob = isVideo ? await makeVideoPreview(file) : await makeImagePreview(file);
+    }catch(e){ previewBlob = null; }
+
+    status.textContent = `Uploading ${i+1} of ${files.length}…`;
+    const { error: e1 } = await sb.storage.from(BUCKET)
+      .upload(`${code}/full/${baseName}`, file, { upsert: true });
+    if(e1){ status.textContent = 'Upload error: ' + e1.message; return; }
+
+    if(previewBlob){
+      const { error: e2 } = await sb.storage.from(BUCKET)
+        .upload(`${code}/preview/${baseName}.jpg`, previewBlob, { upsert: true, contentType: 'image/jpeg' });
+      if(e2){ status.textContent = 'Upload error (preview): ' + e2.message; }
+    }
+  }
+  status.textContent = `${files.length} file(s) uploaded ✓ — watermarked previews ready. Tap "Notify Client" to text them the link.`;
+  loadThumbs();
+  const notifyBtn = document.getElementById('notifyBtn');
+  if(notifyBtn) notifyBtn.classList.add('notify-pulse');
+}
+
+// ---- NOTIFY CLIENT ----
+async function notifyClient(){
+  if(!activeSession) return;
+
+  // Guard against sending "your photos are ready" before anything's actually
+  // uploaded — this is what happened when a client got a link to an empty
+  // gallery. Check storage directly rather than the DOM so it's accurate
+  // even if loadThumbs hasn't run yet.
+  const code = activeSession.code;
+  const { data: files } = await sb.storage.from(BUCKET).list(`${code}/full`, {limit:1});
+  const hasUploads = files && files.some(f => f.name !== '.emptyFolderPlaceholder');
+  if(!hasUploads){
+    const go = await showModal({
+      title: 'Nothing uploaded yet',
+      body: `No photos or reels have been uploaded for ${code}. If you send the link now they'll open an empty gallery — upload first for a better impression.`,
+      confirm: 'Send Anyway',
+      cancel: 'Go Back'
+    });
+    if(!go) return;
+  }
+
+  const link = clientLink(activeSession.code);
+  const who = activeSession.label ? activeSession.label + ' ' : '';
+  const msg = `Hey ${who}— your photos & reels from tonight are ready ✨ Pick your favorites and grab them here: ${link}`;
+  document.getElementById('notifyBtn').classList.remove('notify-pulse');
+
+  sendClientMessage(activeSession.contact, msg, { emailSubject: 'Your ATCHÉ Visuals photos are ready ✨' });
+}
+
+// ---- SHARED SEND HELPER ----
+// Routes a message to a client via SMS, email, or clipboard based on what's
+// in their `contact` field — same auto-detect logic notifyClient() used,
+// factored out so other actions (like Send Feedback Request) can reuse it.
+function sendClientMessage(contact, msg, opts = {}){
+  const raw = (contact || '').trim();
+  const digits = raw.replace(/[^\d+]/g, '');
+  const isPhone = digits.replace(/[^\d]/g, '').length >= 7;
+  const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw);
+
+  if(isPhone){
+    const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const sep = isiOS ? '&' : '?';
+    window.location.href = `sms:${digits}${sep}body=${encodeURIComponent(msg)}`;
+  } else if(isEmail){
+    const subject = opts.emailSubject || 'A note from ATCHÉ Visuals';
+    window.location.href = `mailto:${raw}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(msg)}`;
+  } else {
+    const fallback = raw
+      ? `"${raw}" doesn't look like a phone or email — message copied to clipboard. Paste it into their IG DM.`
+      : `No contact on file — message copied to clipboard. Paste into IG DM or a text.`;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(msg).then(()=>showToast(fallback)).catch(()=>showToast('Could not copy — type message manually', 'error'));
+    } else {
+      showToast('No contact on file — copy the message manually', 'error');
+    }
+  }
+}
+
+// ---- SEND FEEDBACK REQUEST ----
+// Pilot-feedback nudge, mainly for clients who didn't end up purchasing.
+// Frames tonight as a pilot launch, links the short survey (atche-visuals-feedback.html)
+// with the session code attached, and mentions the free-juice incentive for
+// leaving contact info on the survey itself.
+async function sendFeedbackRequest(s){
+  const link = feedbackLink(s.code);
+  const who = s.label ? s.label + ' ' : '';
+  const msg = `Hey ${who}— thanks for being part of our ATCHÉ Visuals pilot launch tonight! Mind giving quick (60-sec) feedback? ${link} — leave your info on the survey and we'll hook you up with a free juice next time 🍹`;
+
+  const goFeedback = await showModal({
+    title: 'Send Feedback Request',
+    body: `Send a pilot-feedback request to ${s.label || s.code}${s.contact ? ' via ' + s.contact : ' (no contact on file — message will be copied to clipboard)'}?`,
+    confirm: 'Send',
+    cancel: 'Cancel'
+  });
+  if(!goFeedback) return;
+
+  sendClientMessage(s.contact, msg, { emailSubject: 'Quick feedback on tonight — ATCHÉ Visuals' });
+}
+
+async function loadThumbs(){
+  if(!activeSession) return;
+  const code = activeSession.code;
+  const { data, error } = await sb.storage.from(BUCKET).list(`${code}/full`, {limit:200, sortBy:{column:'created_at',order:'desc'}});
+  const grid = document.getElementById('thumbGrid');
+  grid.innerHTML = '';
+  if(error || !data) return;
+  data.forEach(f => {
+    if(f.name === '.emptyFolderPlaceholder') return;
+    const { data: prev } = sb.storage.from(BUCKET).getPublicUrl(`${code}/preview/${f.name}.jpg`);
+    const { data: full } = sb.storage.from(BUCKET).getPublicUrl(`${code}/full/${f.name}`);
+    const isVideo = /\.(mp4|mov|webm)$/i.test(f.name);
+    const div = document.createElement('div');
+    div.className = 'thumb';
+    const img = document.createElement('img');
+    img.src = prev.publicUrl;
+    img.onerror = () => { if(!isVideo) img.src = full.publicUrl; };
+    img.title = 'Tap to view full size';
+    img.onclick = () => openThumbLightbox(full.publicUrl, isVideo);
+    div.appendChild(img);
+    if(isVideo){
+      const tag = document.createElement('div');
+      tag.className = 'thumb-tag';
+      tag.textContent = 'REEL';
+      div.appendChild(tag);
+    }
+    const del = document.createElement('div');
+    del.className = 'thumb-delete';
+    del.textContent = '✕';
+    del.title = 'Delete this photo';
+    del.setAttribute('role', 'button');
+    del.setAttribute('aria-label', 'Delete photo');
+    del.onclick = (e) => { e.stopPropagation(); deletePhoto(f.name); };
+    div.appendChild(del);
+    grid.appendChild(div);
+  });
+}
+
+// ---- THUMBNAIL LIGHTBOX ----
+// Tap any uploaded thumbnail to view the clean full-resolution original
+// (not the watermarked preview) full-screen — for photos and reels alike.
+function openThumbLightbox(url, isVideo){
+  const lightbox = document.getElementById('thumbLightbox');
+  const img = document.getElementById('thumbLightboxImg');
+  const video = document.getElementById('thumbLightboxVideo');
+  if(isVideo){
+    img.style.display = 'none';
+    img.src = '';
+    video.src = url;
+    video.style.display = 'block';
+  } else {
+    video.pause();
+    video.style.display = 'none';
+    video.src = '';
+    img.src = url;
+    img.style.display = 'block';
+  }
+  lightbox.classList.add('show');
+}
+
+function closeThumbLightbox(event){
+  if(event) event.stopPropagation();
+  const lightbox = document.getElementById('thumbLightbox');
+  const video = document.getElementById('thumbLightboxVideo');
+  video.pause();
+  video.src = '';
+  lightbox.classList.remove('show');
+}
+
+async function deletePhoto(fileName){
+  if(!activeSession) return;
+  const confirmed = await showModal({
+    title: 'Delete Photo',
+    body: 'Remove this photo for everyone? This deletes the full-res file and preview permanently — it cannot be undone.',
+    confirm: 'Delete',
+    cancel: 'Cancel',
+    danger: true
+  });
+  if(!confirmed) return;
+  const code = activeSession.code;
+  const { error } = await sb.storage.from(BUCKET).remove([
+    `${code}/full/${fileName}`,
+    `${code}/preview/${fileName}.jpg`
+  ]);
+  if(error){ showToast('Error: ' + error.message, 'error'); return; }
+  loadThumbs();
+}
+
+function copyLink(e){
+  if(!activeSession) return;
+  const btn = e ? e.target : document.querySelector('.btn-secondary');
+  const orig = btn.textContent;
+  navigator.clipboard.writeText(clientLink(activeSession.code))
+    .then(() => {
+      btn.textContent = 'Copied ✓';
+      setTimeout(() => btn.textContent = orig, 1500);
+    })
+    .catch(() => showToast('Copy failed — tap and hold the link to copy it manually', 'error'));
+}
+
+async function forgotPassword(){
+  const email = document.getElementById('loginEmail').value.trim();
+  const errEl = document.getElementById('authErr');
+  if(!email){
+    if(errEl){ errEl.textContent = 'Enter your email above first, then tap Forgot Password.'; errEl.style.display = 'block'; }
+    return;
+  }
+  const { error } = await sb.auth.resetPasswordForEmail(email);
+  if(error){
+    if(errEl){ errEl.textContent = error.message; errEl.style.display = 'block'; }
+  } else {
+    if(errEl){ errEl.textContent = 'Check your email — a password reset link has been sent.'; errEl.style.display = 'block'; }
+  }
+}
+
+boot();
+</script>
+
+<!-- CUSTOM MODAL -->
+<div class="cm-overlay" id="cmOverlay" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
+  <div class="cm-box" id="cmBox">
+    <div class="cm-title" id="cmTitle"></div>
+    <div class="cm-body" id="cmBody"></div>
+    <div id="cmFields"></div>
+    <div class="cm-actions" id="cmActions"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+</body>
+</html>
