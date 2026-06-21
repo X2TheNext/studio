@@ -135,7 +135,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .badge-paid{background:var(--sage-dim);color:#9DC9A8;border:1px solid rgba(107,158,122,0.3)}
 .badge-pending{background:var(--rose-dim);color:#E8A0AE;border:1px solid rgba(194,105,122,0.3)}
 .badge-closed{background:var(--surface3);color:var(--text3);border:1px solid var(--border2)}
-.sess-open{font-size:11px;font-weight:600;color:var(--gold);cursor:pointer;letter-spacing:0.5px;flex-shrink:0;min-height:44px;display:flex;align-items:center}
+.sess-open{font-size:11px;font-weight:600;color:var(--gold);cursor:pointer;letter-spacing:0.5px;flex-shrink:0;min-height:44px;display:flex;align-items:center;pointer-events:auto !important;z-index:50}
 .sess-confirm{font-size:11px;font-weight:600;color:#9DC9A8;cursor:pointer;letter-spacing:0.5px;flex-shrink:0;border:1px solid rgba(107,158,122,0.35);border-radius:20px;padding:4px 12px;background:var(--sage-dim);min-height:32px;display:flex;align-items:center}
 .sess-reopen{font-size:11px;font-weight:600;color:var(--gold);cursor:pointer;letter-spacing:0.5px;flex-shrink:0;border:1px solid rgba(201,168,76,0.35);border-radius:20px;padding:4px 10px;background:var(--gold-dim)}
 .sess-reopen:hover{background:rgba(201,168,76,0.22)}
@@ -191,7 +191,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
 .sess-overflow{position:relative;flex-shrink:0}
 .sess-overflow-btn{background:transparent;border:1px solid var(--border2);border-radius:6px;color:var(--text3);font-size:14px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--t);line-height:1;padding-bottom:4px}
 .sess-overflow-btn:hover{background:var(--surface3);color:var(--text);border-color:rgba(201,168,76,0.3)}
-.sess-overflow-menu{position:absolute;right:0;bottom:calc(100% + 6px);background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:6px;z-index:100;min-width:156px;box-shadow:0 -4px 24px rgba(0,0,0,0.6);display:none}
+.sess-overflow-menu{position:absolute;right:0;bottom:calc(100% + 6px);background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:6px;z-index:500;min-width:156px;box-shadow:0 -4px 24px rgba(0,0,0,0.6);display:none}
 .sess-overflow-menu.open{display:block;animation:cm-in .18s cubic-bezier(.16,1,.3,1)}
 .sess-overflow-item{display:block;width:100%;text-align:left;background:transparent;border:none;color:var(--text2);font-size:12px;font-weight:500;padding:9px 12px;border-radius:7px;cursor:pointer;transition:background var(--t),color var(--t);font-family:inherit}
 .sess-overflow-item:hover{background:var(--surface2);color:var(--text)}
@@ -453,8 +453,8 @@ function drawWatermark(ctx, w, h){
   ctx.save();
   const tileFont = Math.max(18, Math.round(w * 0.034));
   ctx.font = `700 ${tileFont}px 'Playfair Display', serif`;
-  ctx.fillStyle = 'rgba(242,237,230,0.16)';
-  ctx.strokeStyle = 'rgba(8,8,8,0.16)';
+  ctx.fillStyle = 'rgba(242,237,230,0.35)';
+  ctx.strokeStyle = 'rgba(8,8,8,0.25)';
   ctx.lineWidth = Math.max(1, tileFont * 0.04);
   ctx.textBaseline = 'middle';
   ctx.translate(w/2, h/2);
