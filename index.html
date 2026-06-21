@@ -7,7 +7,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@200;300;400;500;600;700&display=swap');
-
 :root {
   --black: #080808;
   --surface: #111111;
@@ -27,13 +26,9 @@
   --rose-dim: rgba(194,105,122,0.12);
   --t: 0.2s cubic-bezier(0.4,0,0.2,1);
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',sans-serif;background:var(--black);color:var(--text);min-height:100vh;padding:24px;overflow-x:hidden;display:flex;flex-direction:column;align-items:center}
-
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px;opacity:0.025;pointer-events:none;z-index:0}
-
-/* ---- AMBIENT BACKGROUND ---- */
 .bg-fx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .bg-glow{position:absolute;border-radius:50%;filter:blur(50px);will-change:transform}
 .bg-glow-gold{top:-140px;left:50%;width:560px;height:420px;transform:translate(-50%,var(--py1,0px));background:radial-gradient(ellipse at center, rgba(201,168,76,0.10) 0%, transparent 70%)}
@@ -41,45 +36,34 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .bg-glow-sage{top:40%;left:-160px;width:380px;height:380px;transform:translateY(var(--py3,0px));background:radial-gradient(ellipse at center, rgba(107,158,122,0.06) 0%, transparent 70%)}
 .spark{position:absolute;border-radius:50%;background:var(--gold-light);opacity:0;animation:spark-float linear infinite}
 @keyframes spark-float{0%{opacity:0;transform:translateY(0) scale(0.6)}8%{opacity:0.55}92%{opacity:0.35}100%{opacity:0;transform:translateY(-140px) scale(1)}}
-
 .wrap{max-width:680px;width:100%;position:relative;z-index:1}
-
-/* LOADING */
 #loadingScreen{position:fixed;inset:0;background:var(--black);z-index:200;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
 .load-mark{font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:var(--gold);letter-spacing:8px;animation:pulse 1.4s ease-in-out infinite}
 .load-sub{font-size:10px;color:var(--text3);letter-spacing:3px;text-transform:uppercase}
 @keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}
-
-/* LOGIN */
 #loginScreen{width:100%;max-width:400px;margin:0 auto;position:relative;z-index:1}
 .av-logo{text-align:center;margin-bottom:40px}
 .av-wordmark{font-family:'Playfair Display',serif;font-size:38px;font-weight:700;color:var(--gold);letter-spacing:8px;display:block}
 .av-sub{font-family:'Playfair Display',serif;font-size:13px;font-style:italic;color:var(--text2);letter-spacing:3px;margin-top:2px}
 .av-rule{width:48px;height:1px;background:rgba(201,168,76,0.3);margin:16px auto}
 .av-tagline{font-size:10px;color:var(--text3);letter-spacing:4px;text-transform:uppercase}
-
 .login-card{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:36px;position:relative;overflow:hidden}
 .login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent)}
 .login-card h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;color:var(--text);margin-bottom:6px;text-align:center}
 .login-card p{font-size:12px;color:var(--text3);text-align:center;margin-bottom:28px;letter-spacing:0.3px;line-height:1.6}
-
 .form-group{margin-bottom:14px}
 .form-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:6px}
 .form-input{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:11px 14px;color:var(--text);font-size:14px;outline:none;transition:border-color var(--t);font-family:'Inter',sans-serif}
 .form-input:focus{border-color:var(--gold)}
 .form-input::placeholder{color:var(--text3)}
-
 .btn-primary{width:100%;padding:13px;background:var(--gold);color:var(--black);border:none;border-radius:8px;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:var(--t)}
 .btn-primary:hover:not(:disabled){background:var(--gold-light)}
 .btn-primary:disabled{opacity:0.4;cursor:not-allowed}
-
 .auth-switch{text-align:center;margin-top:16px;font-size:12px;color:var(--text3)}
 .auth-switch a{color:var(--gold);cursor:pointer;font-weight:500}
 .auth-switch a:hover{text-decoration:underline}
 .auth-err{background:rgba(194,105,122,0.1);border:1px solid rgba(194,105,122,0.3);border-radius:8px;padding:10px 12px;font-size:12px;color:#E8A0AE;margin-bottom:14px;display:none;line-height:1.5}
 .auth-loading{text-align:center;font-size:11px;color:var(--text3);margin-top:10px;display:none;letter-spacing:1px}
-
-/* STUDIO */
 #studioScreen{display:none}
 .av-header{text-align:center;margin-bottom:28px;padding-top:8px}
 .av-header-user{font-size:12px;color:var(--text2);margin-top:8px}
@@ -89,29 +73,22 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .close-session-row{margin-top:18px;padding-top:16px;border-top:1px solid var(--border);text-align:center}
 .close-session-btn{background:transparent;border:1px solid var(--border2);border-radius:8px;color:var(--text3);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:10px 20px;cursor:pointer;transition:border-color var(--t),color var(--t)}
 .close-session-btn:hover{border-color:rgba(194,105,122,0.4);color:var(--rose)}
-
 .card{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:26px;position:relative;overflow:hidden;margin-bottom:18px}
 .card:has(#sessList){overflow:visible}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent)}
 .card h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px}
 .card .card-desc{font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:16px}
 .step-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);background:var(--gold-dim);border:1px solid rgba(201,168,76,0.3);border-radius:20px;padding:3px 10px;margin-bottom:12px}
-
-/* REVENUE */
 .rev-row{display:flex;gap:16px}
 .rev-box{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:16px;text-align:center}
 .rev-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--gold);min-height:34px}
 .rev-label{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px}
 .rev-skel{display:inline-block;width:52px;height:22px;margin-top:6px;border-radius:6px;background:linear-gradient(90deg,var(--surface3) 25%,var(--border2) 50%,var(--surface3) 75%);background-size:200% 100%;animation:skel-shine 1.4s ease-in-out infinite}
 @keyframes skel-shine{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-/* NEW SESSION */
 .row{display:flex;gap:10px}
 .row .form-input{flex:1}
 .row .btn-primary{width:auto;padding:11px 20px;white-space:nowrap}
 @media(max-width:480px){.row{flex-direction:column}.row .btn-primary{width:100%}}
-
-/* ---- SMALL-SCREEN SESSION LIST ---- */
 @media(max-width:540px){
   .sess-item{flex-wrap:wrap;gap:8px;padding:10px 12px}
   .sess-code{width:auto;font-size:14px}
@@ -122,8 +99,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   .sess-overflow{order:4}
   .sess-overflow-menu{bottom:auto;top:calc(100% + 6px)}
 }
-
-/* ACTIVE SESSION */
 .session-active{display:none}
 .session-code{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--gold);letter-spacing:4px;text-align:center;margin-bottom:4px}
 .session-label{font-size:12px;color:var(--text2);text-align:center;margin-bottom:18px}
@@ -134,15 +109,12 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .share-link{font-size:12px;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;word-break:break-all;margin-bottom:10px;font-family:monospace}
 .btn-secondary{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid var(--gold);border-radius:8px;padding:9px 16px;cursor:pointer;transition:var(--t)}
 .btn-secondary:hover{background:var(--gold-dim)}
-
-/* UPLOAD */
 .drop-zone{border:1.5px dashed var(--border2);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;transition:var(--t);background:var(--surface2)}
 .drop-zone:hover, .drop-zone.drag{border-color:var(--gold);background:var(--gold-dim)}
 .drop-zone-icon{font-size:24px;margin-bottom:6px;display:block}
 .drop-zone-text{font-size:13px;color:var(--text2);font-weight:500}
 .drop-zone-sub{font-size:11px;color:var(--text3);margin-top:4px}
 #fileInput{display:none}
-
 .thumb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;max-height:420px;overflow-y:auto;padding-right:4px;scroll-behavior:smooth}
 .thumb{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;border:1px solid var(--border2);background:var(--surface2)}
 .thumb img{cursor:pointer;transition:transform .25s var(--t)}
@@ -153,8 +125,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .thumb-delete:hover{background:var(--rose);border-color:var(--rose);color:#fff}
 .thumb-delete:active{transform:scale(0.92)}
 .upload-status{font-size:11px;color:var(--text3);margin-top:10px;text-align:center;letter-spacing:0.5px}
-
-/* SESSION LIST */
 .sess-item{display:flex;align-items:center;gap:12px;border:1px solid var(--border2);border-radius:10px;padding:12px 14px;margin-bottom:8px;background:var(--surface2);transition:var(--t)}
 .sess-item:hover{border-color:rgba(201,168,76,0.4)}
 .sess-code{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--gold);letter-spacing:1px;width:64px;flex-shrink:0}
@@ -172,17 +142,11 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .sess-delete{font-size:11px;font-weight:600;color:#E8A0AE;cursor:pointer;letter-spacing:0.5px;flex-shrink:0;border:1px solid rgba(194,105,122,0.35);border-radius:20px;padding:4px 10px;background:var(--rose-dim)}
 .sess-delete:hover{background:rgba(194,105,122,0.22)}
 .sess-empty{text-align:center;font-size:12px;color:var(--text3);padding:16px 0;font-style:italic}
-
-/* FOOTER */
 .av-footer{display:flex;align-items:center;justify-content:center;gap:24px;padding:18px 0 4px;font-size:11px;color:var(--text3);letter-spacing:0.5px}
 .av-footer a{color:var(--text3);cursor:pointer;transition:var(--t)}
 .av-footer a:hover{color:var(--gold)}
-
-/* ---- FOCUS STYLES ---- */
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
 button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-
-/* ---- CUSTOM MODAL ---- */
 .cm-overlay{position:fixed;inset:0;background:rgba(8,8,8,0.88);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 .cm-overlay.show{display:flex;animation:cm-fade .2s ease}
 @keyframes cm-fade{from{opacity:0}to{opacity:1}}
@@ -204,44 +168,24 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
 .cm-confirm.danger{background:rgba(194,105,122,0.85);color:#fff}
 .cm-confirm.danger:hover{background:var(--rose)}
 .cm-confirm:only-child{flex:unset;width:100%}
-
-/* ---- TOAST ---- */
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:10px 18px;font-size:13px;color:var(--text);z-index:400;transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .3s ease;opacity:0;pointer-events:none;white-space:nowrap;max-width:calc(100vw - 40px);text-overflow:ellipsis;overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,0.5)}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .toast.success{border-color:rgba(107,158,122,0.5);color:#9DC9A8}
 .toast.error{border-color:rgba(194,105,122,0.5);color:#E8A0AE}
-
-/* ---- HEADER MOTION ---- */
 @keyframes header-in{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 .av-header, .av-logo{animation:header-in 0.9s cubic-bezier(.16,1,.3,1) both}
-.av-logo .av-wordmark, .av-header .av-wordmark{
-  background:linear-gradient(100deg, var(--gold) 30%, var(--gold-light) 50%, var(--gold) 70%);
-  background-size:200% auto;
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-  animation:wordmark-shine 9s ease-in-out infinite;
-}
+.av-logo .av-wordmark, .av-header .av-wordmark{background:linear-gradient(100deg, var(--gold) 30%, var(--gold-light) 50%, var(--gold) 70%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:wordmark-shine 9s ease-in-out infinite}
 @keyframes wordmark-shine{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 .av-rule{width:0 !important;animation:rule-draw 1s 0.35s cubic-bezier(.16,1,.3,1) forwards}
 @keyframes rule-draw{to{width:48px}}
-
-/* ---- SCROLL REVEAL ---- */
 .reveal{opacity:0;transform:translateY(18px);transition:opacity 0.7s cubic-bezier(.16,1,.3,1), transform 0.7s cubic-bezier(.16,1,.3,1)}
 .reveal.visible{opacity:1;transform:translateY(0)}
-
-/* ---- SESSION LIST STAGGER ---- */
 @keyframes item-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .sess-item{animation:item-in .45s cubic-bezier(.16,1,.3,1) both;animation-delay:var(--d,0s);transition:transform var(--t),border-color var(--t)}
 .sess-item:hover{transform:translateY(-1px);border-color:rgba(201,168,76,0.4)}
-
-/* ---- CONFIRM PAID EMPHASIS ---- */
 @keyframes confirm-pulse{0%,100%{box-shadow:0 0 0 0 rgba(107,158,122,0.45)}50%{box-shadow:0 0 0 5px rgba(107,158,122,0)}}
 .sess-confirm{animation:confirm-pulse 2.2s ease-in-out infinite;transition:var(--t)}
 .sess-confirm:hover{background:rgba(107,158,122,0.28);animation-play-state:paused}
-
-/* ---- MANUAL MARK PAID (no client-side request yet) ---- */
-/* Same shape as Confirm Paid but muted/no pulse — it's a staff-initiated
-   override for "they paid but never tapped the button", not an urgent
-   client-side request. */
 .sess-manual-pay{animation:none;color:var(--text2);border-color:var(--border2);background:var(--surface3)}
 .sess-manual-pay:hover{background:var(--surface2);color:var(--gold)}
 .sess-overflow{position:relative;flex-shrink:0}
@@ -253,14 +197,8 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
 .sess-overflow-item:hover{background:var(--surface2);color:var(--text)}
 .sess-overflow-item.danger{color:var(--rose)}
 .sess-overflow-item.danger:hover{background:rgba(194,105,122,0.12);color:#E8A0AE}
-
-/* ---- SEND FEEDBACK REQUEST ---- */
-/* Pilot-feedback nudge for anyone who hasn't paid yet — same muted shape as
-   Mark Paid, just a different accent on hover so it doesn't look urgent. */
 .sess-feedback{animation:none;color:var(--text2);border-color:var(--border2);background:var(--surface3)}
 .sess-feedback:hover{background:var(--surface2);color:var(--gold-light)}
-
-/* ---- PAYMENT BANNER (active session card) ---- */
 .payment-banner{display:none;align-items:center;justify-content:space-between;gap:10px;background:var(--sage-dim);border:1px solid rgba(107,158,122,0.35);border-radius:12px;padding:12px 14px;margin-bottom:16px;animation:confirm-pulse 2.2s ease-in-out infinite}
 .payment-banner.show{display:flex}
 .payment-banner-text{font-size:13px;color:#9DC9A8;font-weight:600}
@@ -269,8 +207,6 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
 .payment-banner-btn:hover{background:rgba(107,158,122,0.3)}
 @keyframes banner-flash{0%,100%{outline-color:rgba(107,158,122,0)}30%{outline-color:rgba(107,158,122,0.9)}}
 .payment-banner.flash{outline:3px solid rgba(107,158,122,0);outline-offset:3px;animation:banner-flash 1.2s ease-out}
-
-/* ---- AI EDIT OWED BANNER (active session card) ---- */
 @keyframes ai-edit-pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,0.45)}50%{box-shadow:0 0 0 5px rgba(201,168,76,0)}}
 .ai-edit-banner{display:none;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.35);border-radius:12px;padding:12px 14px;margin-bottom:16px;animation:ai-edit-pulse 2.2s ease-in-out infinite}
 .ai-edit-banner.show{display:flex}
@@ -282,26 +218,16 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
 .ai-edit-banner-btn.uploading{opacity:0.6;pointer-events:none}
 .ai-edit-banner-btn.copied{background:var(--sage-dim);color:var(--sage);border-color:rgba(107,158,122,0.4)}
 .ai-edit-banner-prompt{flex:1 1 100%;font-size:11px;color:var(--text2);line-height:1.6;background:rgba(0,0,0,0.18);border-radius:8px;padding:10px 12px;margin-top:4px}
-
-/* ---- NOTIFY CLIENT EMPHASIS ---- */
 @keyframes notify-pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,0.45)}50%{box-shadow:0 0 0 5px rgba(201,168,76,0)}}
 .notify-pulse{animation:notify-pulse 2.2s ease-in-out infinite}
 .notify-pulse:hover{animation-play-state:paused}
-
-/* ---- BUTTON MICRO-INTERACTIONS ---- */
 .btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 18px rgba(201,168,76,0.25)}
 .btn-primary:active:not(:disabled){transform:scale(0.98)}
 .btn-secondary:hover{transform:translateY(-1px)}
 .btn-secondary:active{transform:scale(0.97)}
-
-/* ---- REVENUE COUNT-UP POP ---- */
 .rev-num{transition:transform 0.3s cubic-bezier(.34,1.56,.64,1)}
 .rev-num.bump{transform:scale(1.12)}
-
-/* ---- ACTIVE SESSION CARD ---- */
 .session-active.show{animation:item-in .5s cubic-bezier(.16,1,.3,1) both}
-
-/* ---- THUMBNAIL LIGHTBOX ---- */
 .thumb-lightbox{display:none;position:fixed;inset:0;background:rgba(8,8,8,0.92);z-index:999;align-items:center;justify-content:center;padding:24px;cursor:zoom-out}
 .thumb-lightbox.show{display:flex;animation:item-in .3s cubic-bezier(.16,1,.3,1)}
 .thumb-lightbox img, .thumb-lightbox video{max-width:100%;max-height:90vh;border-radius:10px;border:1px solid var(--border2);cursor:default}
@@ -310,22 +236,16 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
 </style>
 </head>
 <body>
-
-<!-- AMBIENT BACKGROUND -->
 <div class="bg-fx" aria-hidden="true">
   <div class="bg-glow bg-glow-gold"></div>
   <div class="bg-glow bg-glow-rose"></div>
   <div class="bg-glow bg-glow-sage"></div>
   <div id="sparkleField"></div>
 </div>
-
-<!-- LOADING -->
 <div id="loadingScreen">
   <div class="load-mark">ATCHÉ</div>
   <div class="load-sub">Loading Studio…</div>
 </div>
-
-<!-- LOGIN -->
 <div id="loginScreen" style="display:none">
   <div class="av-logo">
     <span class="av-wordmark">ATCHÉ VISUALS</span>
@@ -355,8 +275,6 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
     </div>
   </div>
 </div>
-
-<!-- STUDIO -->
 <div id="studioScreen">
   <div class="wrap">
     <div class="av-header">
@@ -365,8 +283,6 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
       <div class="av-rule"></div>
       <div class="av-header-user">Signed in as <span id="userEmail">–</span> · <a onclick="doSignOut()" class="sign-out-link" role="button" tabindex="0">Sign out</a></div>
     </div>
-
-    <!-- TONIGHT'S NUMBERS -->
     <div class="card reveal">
       <span class="step-tag">Tonight</span>
       <h2>Sessions &amp; Revenue</h2>
@@ -385,8 +301,6 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
         </div>
       </div>
     </div>
-
-    <!-- NEW SESSION -->
     <div class="card reveal">
       <span class="step-tag">New Door</span>
       <h2>Start a client session</h2>
@@ -398,8 +312,6 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
       <p class="card-desc" style="margin:8px 0 0">The label is what they'll see in their "Hey ___" notification, so a name beats "Table 4." Contact lets you follow up if they don't unlock or download tonight — if it's a phone number, "Notify Client" texts them the link; if it's an email, it opens a pre-filled email instead. Both optional.</p>
       <button class="btn-primary" style="width:100%;margin-top:10px" onclick="createSession()">Create Session</button>
     </div>
-
-    <!-- ACTIVE SESSION -->
     <div class="card session-active" id="activeCard">
       <span class="step-tag">Client Door — Open</span>
       <h2 style="text-align:center;margin-bottom:14px">Hand this to your client</h2>
@@ -438,21 +350,16 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
         <button class="close-session-btn" onclick="closeSessionConfirm()">Close Session</button>
       </div>
     </div>
-
-    <!-- THUMBNAIL LIGHTBOX -->
     <div class="thumb-lightbox" id="thumbLightbox" onclick="closeThumbLightbox(event)">
       <span class="thumb-lightbox-close" onclick="closeThumbLightbox(event)" role="button" tabindex="0" aria-label="Close preview">✕</span>
       <img id="thumbLightboxImg" alt="Full-size preview" style="display:none">
       <video id="thumbLightboxVideo" controls style="display:none"></video>
     </div>
-
-    <!-- SESSION LIST -->
     <div class="card reveal">
       <span class="step-tag">All Sessions</span>
       <h2>Tonight's doors</h2>
       <div id="sessList"><div class="sess-empty">No sessions yet — create one above.</div></div>
     </div>
-
     <div class="av-footer">
       <a onclick="window.open('https://atche-visuals.atcheofficial.com/','_blank')">↗ Client Door Preview</a>
       <span style="color:var(--border2)">·</span>
@@ -460,24 +367,18 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
     </div>
   </div>
 </div>
-
 <script>
 const SB_URL = 'https://aayigsbmmdolvnicxacs.supabase.co';
 const SB_KEY = 'sb_publishable_ofAZ_64cKZXJefM5nbbt3g_wNOoF5DC';
 const sb = supabase.createClient(SB_URL, SB_KEY);
 const BUCKET = 'visuals';
-
-// ---- MODAL + TOAST SYSTEM ----
 let _cmResolve = null;
-
 function showModal(opts){
-  // opts: { title, body, confirm, cancel, danger, fields:[{key,label,placeholder,type}] }
   return new Promise(resolve => {
     _cmResolve = resolve;
     const overlay = document.getElementById('cmOverlay');
     document.getElementById('cmTitle').textContent = opts.title || '';
     document.getElementById('cmBody').textContent = opts.body || '';
-
     const fieldsEl = document.getElementById('cmFields');
     fieldsEl.innerHTML = '';
     if(opts.fields && opts.fields.length){
@@ -488,7 +389,6 @@ function showModal(opts){
         g.appendChild(lbl); g.appendChild(inp); fieldsEl.appendChild(g);
       });
     }
-
     const actionsEl = document.getElementById('cmActions');
     actionsEl.innerHTML = '';
     if(opts.cancel !== false){
@@ -509,23 +409,18 @@ function showModal(opts){
       }
     };
     actionsEl.appendChild(btnOk);
-
     overlay.classList.add('show');
-    // Focus first input or confirm button
     requestAnimationFrame(() => {
       const first = fieldsEl.querySelector('input');
       if(first) first.focus(); else btnOk.focus();
     });
   });
 }
-
 function closeModal(){
   document.getElementById('cmOverlay').classList.remove('show');
   document.getElementById('cmFields').innerHTML = '';
   _cmResolve = null;
 }
-
-// Close modal on overlay click + close overflow menus on outside click
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cmOverlay').addEventListener('click', e => {
     if(e.target === document.getElementById('cmOverlay')){ closeModal(); if(_cmResolve) _cmResolve(null); }
@@ -538,7 +433,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
-
 let _toastTimer = null;
 function showToast(msg, type = ''){
   const t = document.getElementById('toast');
@@ -548,23 +442,14 @@ function showToast(msg, type = ''){
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
 }
-
-// ---- WATERMARKED PREVIEWS ----
-// Every upload is stored twice: the original (untouched) goes to `full/`,
-// and an auto-watermarked, downsized preview goes to `preview/`. The client
-// gallery only ever displays the watermarked preview — the clean original
-// unlocks on download once payment is confirmed.
 const WM_TEXT = 'ATCHÉ VISUALS';
-
 async function ensureFonts(){
   try{
     await document.fonts.load("700 32px 'Playfair Display'");
     await document.fonts.load("400 16px 'Playfair Display'");
-  }catch(e){ /* falls back to default serif if fonts aren't ready */ }
+  }catch(e){ }
 }
-
 function drawWatermark(ctx, w, h){
-  // Diagonal repeating wordmark across the whole frame
   ctx.save();
   const tileFont = Math.max(18, Math.round(w * 0.034));
   ctx.font = `700 ${tileFont}px 'Playfair Display', serif`;
@@ -586,8 +471,6 @@ function drawWatermark(ctx, w, h){
     }
   }
   ctx.restore();
-
-  // Bottom-right brand mark, on a dark pill so it reads on any photo
   ctx.save();
   const pad = Math.round(w * 0.028);
   const markFont = Math.max(18, Math.round(w * 0.038));
@@ -603,7 +486,6 @@ function drawWatermark(ctx, w, h){
   ctx.fillText(WM_TEXT, w - pad - pillPadX, h - pad - pillPadY*0.6);
   ctx.restore();
 }
-
 function drawPlayBadge(ctx, w, h){
   const r = Math.round(Math.min(w,h) * 0.09);
   const cx = w/2, cy = h/2;
@@ -622,7 +504,6 @@ function drawPlayBadge(ctx, w, h){
   ctx.fill();
   ctx.restore();
 }
-
 function loadImageFromFile(file){
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
@@ -632,18 +513,14 @@ function loadImageFromFile(file){
     img.src = url;
   });
 }
-
 function canvasToBlob(canvas, type, quality){
   return new Promise((resolve, reject) => canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob failed')), type, quality));
 }
-
 function fitDims(w, h, maxDim){
   if(w > h && w > maxDim) return { width: maxDim, height: Math.round(h * maxDim / w) };
   if(h >= w && h > maxDim) return { width: Math.round(w * maxDim / h), height: maxDim };
   return { width: w, height: h };
 }
-
-// Watermarked, downsized preview for a photo
 async function makeImagePreview(file, maxDim = 1280){
   const img = await loadImageFromFile(file);
   const { width, height } = fitDims(img.naturalWidth, img.naturalHeight, maxDim);
@@ -655,8 +532,6 @@ async function makeImagePreview(file, maxDim = 1280){
   drawWatermark(ctx, width, height);
   return canvasToBlob(canvas, 'image/jpeg', 0.82);
 }
-
-// Watermarked poster frame for a video
 async function makeVideoPreview(file, maxDim = 1280){
   const url = URL.createObjectURL(file);
   const video = document.createElement('video');
@@ -683,12 +558,9 @@ async function makeVideoPreview(file, maxDim = 1280){
   URL.revokeObjectURL(url);
   return canvasToBlob(canvas, 'image/jpeg', 0.82);
 }
-
 let isSignup = false;
 let currentUser = null;
-let activeSession = null; // {id, code, label}
-
-// ---- AUTH ----
+let activeSession = null;
 function toggleMode() {
   isSignup = !isSignup;
   document.getElementById('loginTitle').textContent = isSignup ? 'Create Account' : 'Welcome Back';
@@ -699,7 +571,6 @@ function toggleMode() {
     : "Don't have an account? <a onclick=\"toggleMode()\">Create one</a>";
   hideErr();
 }
-
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const pass  = document.getElementById('loginPass').value;
@@ -720,17 +591,13 @@ async function doLogin() {
   }
   if(data.session) showStudio(data.session.user);
 }
-
 async function doSignOut() {
   await sb.auth.signOut();
   document.getElementById('studioScreen').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'block';
 }
-
 function showErr(msg){ const e=document.getElementById('authErr'); e.textContent=msg; e.style.display='block'; }
 function hideErr(){ document.getElementById('authErr').style.display='none'; }
-
-// ---- AMBIENT BACKGROUND FX ----
 function initBgFx(){
   const field = document.getElementById('sparkleField');
   if(field && !field.dataset.ready){
@@ -765,8 +632,6 @@ function initBgFx(){
     });
   }
 }
-
-// ---- SCROLL REVEAL ----
 function initReveal(){
   const els = document.querySelectorAll('.reveal');
   function check(){
@@ -781,7 +646,6 @@ function initReveal(){
   window.addEventListener('scroll', check);
   window.addEventListener('resize', check);
 }
-
 async function boot() {
   const { data: { session } } = await sb.auth.getSession();
   document.getElementById('loadingScreen').style.display = 'none';
@@ -789,7 +653,6 @@ async function boot() {
   if(session){ showStudio(session.user); }
   else { document.getElementById('loginScreen').style.display = 'block'; }
 }
-
 function showStudio(user) {
   currentUser = user;
   document.getElementById('loginScreen').style.display = 'none';
@@ -798,19 +661,15 @@ function showStudio(user) {
   loadSessions();
   initBgFx();
   initReveal();
-  // Poll so "Confirm Paid" requests from clients show up without a manual refresh.
   setInterval(loadSessions, 8000);
 }
-
 function esc(str){
   if(str == null) return '';
   return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
-
 function setStat(id, value){
   const el = document.getElementById(id);
   const next = String(value);
-  // Clear skeleton on first real data
   const skel = el.querySelector('.rev-skel');
   if(skel) skel.remove();
   if(el.textContent === next) return;
@@ -820,64 +679,27 @@ function setStat(id, value){
   el.classList.add('bump');
   setTimeout(() => el.classList.remove('bump'), 300);
 }
-
-// ---- SESSIONS ----
 function genCode(){
   const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
   let c = '';
   for(let i=0;i<5;i++) c += chars[Math.floor(Math.random()*chars.length)];
   return c;
 }
-
 const CLIENT_GALLERY_BASE = 'https://atche-visuals.atcheofficial.com/';
-
 function clientLink(code){
   return CLIENT_GALLERY_BASE + '?s=' + code;
 }
-
 function feedbackLink(code){
   return CLIENT_GALLERY_BASE + 'atche-visuals-feedback.html?s=' + code;
 }
-
-// ---- AI EDIT GENERATION PROMPTS ----
-// Non-destructive / editorial: every prompt leads with an explicit instruction
-// to preserve the subject's face, identity, skin tone, pose, and outfit, then
-// only describes changes to the environment, lighting, and added props. This
-// is the prompt text staff pastes into the generation tool (Higgsfield or
-// similar) when fulfilling an AI Edit. Keys match the `name` field in
-// AI_EDIT_THEMES (atche-visuals.html).
 const AI_EDIT_PROMPTS = {
-  'Your Name in Lights':
-    "Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. " +
-    "Replace only the background and environment: place them at the base of a massive illuminated marquee or LED billboard with their name glowing large in the sky; surrounding neon signs, concert stage energy, and a crowd of bokeh lights create a star-is-born atmosphere. " +
-    "Light the subject with the warm, colorful glow of neon and marquee lights from above. Finish with a vibrant editorial grade — punchy but true-to-skin, no smoothing or reshaping.",
-
-  'Private Jet':
-    "Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features or proportions, and keep their outfit unchanged. " +
-    "Replace only the background and environment: place them on a private jet tarmac at golden hour, with a sleek private jet behind them and designer luggage nearby; if their pose allows, add a glass of champagne naturally in hand. " +
-    "Light the subject to match the warm golden-hour environment with soft, flattering falloff and shallow depth of field. Finish with a polished, editorial color grade — crisp but natural, no skin smoothing or body reshaping.",
-
-  'Sports Car':
-    "Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. " +
-    "Replace only the background and environment: place them beside or in front of a sleek, gleaming supercar (Lamborghini or Ferrari aesthetic) parked on an open coastal road or city street at golden hour; environment should feel aspirational and cinematic. " +
-    "Light the subject with warm directional golden-hour light, subtle reflections from the car's metallic surface. Finish with a high-contrast, editorial grade — vivid and sharp, no skin smoothing or body reshaping.",
-
-  'VIP Section':
-    "Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. " +
-    "Replace only the background and environment: a luxurious nightclub VIP section — plush velvet seating, bottle service with sparklers on a nearby table, low warm accent lighting, a glowing dancefloor visible in the background. The subject is clearly the one everyone came to see. " +
-    "Light the subject with the rich, moody warmth of club ambient lighting. Finish with a sophisticated editorial grade — glamorous but not garish, no skin smoothing or body reshaping.",
-
-  'Penthouse Night':
-    "Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. " +
-    "Replace only the background and environment: a glowing penthouse lounge at night with floor-to-ceiling windows overlooking a city skyline, warm ambient interior light, soft bokeh city lights in the distance. " +
-    "Relight the subject to feel naturally lit by the room's warm glow with subtle cool reflections from the skyline. Finish with rich, moody editorial color grading and a clean, magazine-quality composition — no skin smoothing or body reshaping.",
-
-  'Red Carpet':
-    "Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. " +
-    "Replace only the background and environment: a step-and-repeat red carpet backdrop with a subtle premiere-branding pattern, plus soft paparazzi-style flash highlights/light flares around the frame edges as if caught mid-photo at a premiere. " +
-    "Apply crisp, high-contrast editorial lighting consistent with red carpet event photography. Finish polished and magazine-ready — no skin smoothing or body reshaping."
+  'Your Name in Lights':"Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. Replace only the background and environment: place them at the base of a massive illuminated marquee or LED billboard with their name glowing large in the sky; surrounding neon signs, concert stage energy, and a crowd of bokeh lights create a star-is-born atmosphere. Light the subject with the warm, colorful glow of neon and marquee lights from above. Finish with a vibrant editorial grade — punchy but true-to-skin, no smoothing or reshaping.",
+  'Private Jet':"Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features or proportions, and keep their outfit unchanged. Replace only the background and environment: place them on a private jet tarmac at golden hour, with a sleek private jet behind them and designer luggage nearby; if their pose allows, add a glass of champagne naturally in hand. Light the subject to match the warm golden-hour environment with soft, flattering falloff and shallow depth of field. Finish with a polished, editorial color grade — crisp but natural, no skin smoothing or body reshaping.",
+  'Sports Car':"Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. Replace only the background and environment: place them beside or in front of a sleek, gleaming supercar (Lamborghini or Ferrari aesthetic) parked on an open coastal road or city street at golden hour; environment should feel aspirational and cinematic. Light the subject with warm directional golden-hour light, subtle reflections from the car's metallic surface. Finish with a high-contrast, editorial grade — vivid and sharp, no skin smoothing or body reshaping.",
+  'VIP Section':"Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. Replace only the background and environment: a luxurious nightclub VIP section — plush velvet seating, bottle service with sparklers on a nearby table, low warm accent lighting, a glowing dancefloor visible in the background. The subject is clearly the one everyone came to see. Light the subject with the rich, moody warmth of club ambient lighting. Finish with a sophisticated editorial grade — glamorous but not garish, no skin smoothing or body reshaping.",
+  'Penthouse Night':"Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. Replace only the background and environment: a glowing penthouse lounge at night with floor-to-ceiling windows overlooking a city skyline, warm ambient interior light, soft bokeh city lights in the distance. Relight the subject to feel naturally lit by the room's warm glow with subtle cool reflections from the skyline. Finish with rich, moody editorial color grading and a clean, magazine-quality composition — no skin smoothing or body reshaping.",
+  'Red Carpet':"Non-destructive edit — keep the subject's face, identity, skin tone, hairstyle, expression, body shape, and pose exactly as in the original photo. Do not alter facial features, proportions, or outfit. Replace only the background and environment: a step-and-repeat red carpet backdrop with a subtle premiere-branding pattern, plus soft paparazzi-style flash highlights/light flares around the frame edges as if caught mid-photo at a premiere. Apply crisp, high-contrast editorial lighting consistent with red carpet event photography. Finish polished and magazine-ready — no skin smoothing or body reshaping."
 };
-
 async function createSession(){
   const label = document.getElementById('newLabel').value.trim();
   const contact = document.getElementById('newContact').value.trim();
@@ -890,8 +712,8 @@ async function createSession(){
   document.getElementById('newContact').value = '';
   openSession(data);
   loadSessions();
+  showToast('Session created ✓', 'success');
 }
-
 function openSession(session){
   activeSession = session;
   const activeCard = document.getElementById('activeCard');
@@ -909,12 +731,6 @@ function openSession(session){
   loadThumbs();
   updatePaymentBanner();
   updateAiEditBanner();
-
-  // Scroll so the relevant info is actually visible: if this session needs
-  // a payment confirmation, jump straight to that banner (and flash it) so
-  // staff can act on it immediately — otherwise just scroll to the top of
-  // the card. Deferred a tick so layout reflects the banner's new display
-  // state before we measure scroll position.
   requestAnimationFrame(() => {
     const banner = document.getElementById('paymentBanner');
     if(banner.classList.contains('show')){
@@ -927,11 +743,6 @@ function openSession(session){
     }
   });
 }
-
-// ---- PAYMENT BANNER ----
-// Shows a prominent "Confirm Paid" prompt right on the active session card
-// when the client has tapped "I've sent payment" — so staff don't have to
-// hunt for the pill in the session list below.
 function updatePaymentBanner(){
   const banner = document.getElementById('paymentBanner');
   if(!activeSession){ banner.classList.remove('show'); return; }
@@ -942,12 +753,6 @@ function updatePaymentBanner(){
   document.getElementById('paymentBannerBtn').onclick = () => markPaid(activeSession);
   banner.classList.add('show');
 }
-
-// ---- AI EDIT OWED BANNER ----
-// Shows once a client's payment (including their AI-Enhanced Edit add-on)
-// has been confirmed but the edit hasn't been delivered yet. Tells staff
-// which theme + which uploaded photo to base the edit on, and lets them
-// drop the finished file straight into <code>/ai/ once it's ready.
 function updateAiEditBanner(){
   const banner = document.getElementById('aiEditBanner');
   if(!activeSession){ banner.classList.remove('show'); return; }
@@ -957,10 +762,6 @@ function updateAiEditBanner(){
   document.getElementById('aiEditBannerPhoto').textContent = activeSession.ai_edit_photo
     ? `Base it on: ${activeSession.ai_edit_photo}`
     : '';
-
-  // Show the non-destructive/editorial generation prompt for this theme so
-  // staff can paste it straight into Higgsfield (or whatever they're using)
-  // without hunting for it elsewhere.
   const promptEl = document.getElementById('aiEditBannerPrompt');
   const copyBtn = document.getElementById('aiEditCopyPromptBtn');
   const prompt = AI_EDIT_PROMPTS[activeSession.ai_edit_theme];
@@ -974,12 +775,8 @@ function updateAiEditBanner(){
   }
   copyBtn.classList.remove('copied');
   copyBtn.textContent = '📋 Copy Prompt';
-
   banner.classList.add('show');
 }
-
-// Copies the generation prompt for the active session's AI Edit theme to the
-// clipboard so staff can paste it directly into their image-gen tool.
 async function copyAiEditPrompt(){
   if(!activeSession) return;
   const prompt = AI_EDIT_PROMPTS[activeSession.ai_edit_theme];
@@ -987,7 +784,6 @@ async function copyAiEditPrompt(){
   try{
     await navigator.clipboard.writeText(prompt);
   }catch(e){
-    // Clipboard unavailable — show toast; user can long-press the prompt text
     showToast('Clipboard unavailable — tap and hold the prompt to copy it', 'error');
     return;
   }
@@ -999,7 +795,6 @@ async function copyAiEditPrompt(){
     copyBtn.classList.remove('copied');
   }, 2000);
 }
-
 async function closeSessionConfirm(){
   if(!activeSession) return;
   const label = activeSession.label ? ` for ${activeSession.label}` : '';
@@ -1014,7 +809,6 @@ async function closeSessionConfirm(){
   if(!confirmed) return;
   closeSession();
 }
-
 async function closeSession(){
   if(!activeSession) return;
   await sb.from('visuals_sessions').update({status:'closed'}).eq('id', activeSession.id);
@@ -1022,21 +816,15 @@ async function closeSession(){
   activeSession = null;
   loadSessions();
 }
-
 async function loadSessions(){
   const { data, error } = await sb.from('visuals_sessions')
     .select('*').eq('user_id', currentUser.id)
     .order('created_at', {ascending:false}).limit(50);
   if(error || !data){ return; }
-
-  // Keep the active session card's data (and payment banner) in sync with
-  // the latest row, so a client's "I've sent payment" tap shows up here
-  // within one poll cycle (every 8s) without needing to reopen the session.
   if(activeSession){
     const fresh = data.find(s => s.id === activeSession.id);
     if(fresh){ activeSession = fresh; updatePaymentBanner(); updateAiEditBanner(); }
   }
-
   const todayStr = new Date().toDateString();
   const tonight = data.filter(s => new Date(s.created_at).toDateString() === todayStr);
   const paidTotal = tonight.filter(s=>s.paid).reduce((sum,s)=>sum+(Number(s.package_price)||0)+(Number(s.ai_edit_price)||0),0);
@@ -1044,7 +832,6 @@ async function loadSessions(){
   setStat('revTotal', '$' + paidTotal);
   setStat('revSessions', tonight.length);
   setStat('revPending', pending);
-
   const list = document.getElementById('sessList');
   if(data.length === 0){
     list.innerHTML = '<div class="sess-empty">No sessions yet — create one above.</div>';
@@ -1064,7 +851,6 @@ async function loadSessions(){
     else if(s.paid){ badge = 'Paid $' + s.package_price; badgeClass = 'badge-paid'; }
     else if(needsConfirm){ badge = 'Confirm $' + (s.package_price || 0); badgeClass = 'badge-pending'; }
     else { badge = 'Awaiting'; badgeClass = 'badge-pending'; }
-
     const hasOverflow = canFeedback || s.status === 'closed';
     div.innerHTML = `
       <div class="sess-code">${esc(s.code)}</div>
@@ -1114,11 +900,6 @@ async function loadSessions(){
     list.appendChild(div);
   });
 }
-
-// ---- PAYMENT CONFIRMATION ----
-// Clients can only flag "I sent payment" (sets payment_requested via RPC).
-// Only staff, signed in here, can flip `paid` — that's what actually unlocks
-// the client's download.
 async function markPaid(s){
   const amt = s.package_price ? `$${s.package_price}` : 'this payment';
   const confirmed = await showModal({
@@ -1133,21 +914,16 @@ async function markPaid(s){
     paid_at: new Date().toISOString(),
     payment_requested: false
   }).eq('id', s.id);
-  if(error){ showToast('Error: ' + error.message, 'error'); return; }
+  if(error){
+    showToast('Could not confirm payment — ' + error.message, 'error');
+    return;
+  }
   showToast(`${esc(s.code)}${s.package_price ? ' — $' + s.package_price : ''} confirmed ✓`, 'success');
   loadSessions();
 }
-
-// ---- MANUAL MARK PAID (no client-side request) ----
-// For sessions where the client paid via Cash App but never tapped "I've
-// sent payment" in their gallery — staff sees the Cash App notification and
-// unlocks the download directly. Since the client never sent a package
-// name/price via request_payment_confirmation, ask for it here so revenue
-// totals and the unlocked download still reflect the right package.
 async function manualMarkPaid(s){
   let pkgName = s.package_name || '';
   let pkgPrice = s.package_price || 0;
-
   if(!pkgPrice){
     const result = await showModal({
       title: 'Mark Paid Manually',
@@ -1171,7 +947,6 @@ async function manualMarkPaid(s){
     });
     if(!confirmed) return;
   }
-
   const { error } = await sb.from('visuals_sessions').update({
     paid: true,
     paid_at: new Date().toISOString(),
@@ -1182,21 +957,11 @@ async function manualMarkPaid(s){
   if(error){ showToast('Error: ' + error.message, 'error'); return; }
   loadSessions();
 }
-
-// ---- REOPEN ----
-// A closed session can't receive new "I've sent payment" requests (the RPC
-// only updates status='active' rows). Lets staff flip it back to active
-// from the session list if a client pays after the session was closed.
 async function reopenSession(s){
   const { error } = await sb.from('visuals_sessions').update({status:'active'}).eq('id', s.id);
   if(error){ showToast('Error: ' + error.message, 'error'); return; }
   loadSessions();
 }
-
-// ---- DELETE OLD SESSION ----
-// Permanently removes a closed session: its row, plus every uploaded file
-// (full / preview / ai) for that code. Used to clear out old test sessions
-// or doors from past nights that are no longer needed.
 async function deleteSession(s){
   const label = s.label ? ` (${s.label})` : '';
   const confirmed = await showModal({
@@ -1207,7 +972,6 @@ async function deleteSession(s){
     danger: true
   });
   if(!confirmed) return;
-
   for(const sub of ['full','preview','ai']){
     const { data } = await sb.storage.from(BUCKET).list(`${s.code}/${sub}`, {limit:500});
     if(data && data.length){
@@ -1215,38 +979,27 @@ async function deleteSession(s){
       if(paths.length) await sb.storage.from(BUCKET).remove(paths);
     }
   }
-
   const { error } = await sb.from('visuals_sessions').delete().eq('id', s.id);
   if(error){ showToast('Error: ' + error.message, 'error'); return; }
-
   if(activeSession && activeSession.id === s.id){
     document.getElementById('activeCard').style.display = 'none';
     activeSession = null;
   }
   loadSessions();
 }
-
-// ---- AI EDIT UPLOAD ----
-// Staff drops the finished AI-Enhanced Edit (from Higgsfield or similar)
-// into <code>/ai/ and flips ai_edit_delivered=true — the client's gallery
-// picks it up on its next poll.
 const aiEditUploadInput = document.getElementById('aiEditUploadInput');
 aiEditUploadInput.addEventListener('change', e => handleAiEditUpload(e.target.files));
-
 async function handleAiEditUpload(fileList){
   if(!activeSession) return;
   const file = fileList[0];
   if(!file) return;
-
   const btn = document.getElementById('aiEditBannerBtn');
   const orig = btn.textContent;
   btn.textContent = 'Uploading…';
   btn.classList.add('uploading');
-
   const code = activeSession.code;
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
   const filename = `ai-edit-${Date.now()}.${ext}`;
-
   const { error: e1 } = await sb.storage.from(BUCKET)
     .upload(`${code}/ai/${filename}`, file, { upsert: true });
   if(e1){
@@ -1255,7 +1008,6 @@ async function handleAiEditUpload(fileList){
     btn.classList.remove('uploading');
     return;
   }
-
   const { error: e2 } = await sb.from('visuals_sessions').update({
     ai_edit_delivered: true,
     ai_edit_delivered_at: new Date().toISOString()
@@ -1266,18 +1018,14 @@ async function handleAiEditUpload(fileList){
     btn.classList.remove('uploading');
     return;
   }
-
   activeSession.ai_edit_delivered = true;
   btn.textContent = orig;
   btn.classList.remove('uploading');
   updateAiEditBanner();
   loadSessions();
 }
-
-// ---- UPLOAD ----
 const fileInput = document.getElementById('fileInput');
 const dropZone = document.getElementById('dropZone');
-
 fileInput.addEventListener('change', e => handleFiles(e.target.files));
 ['dragover','dragleave','drop'].forEach(evt => {
   dropZone.addEventListener(evt, e => {
@@ -1287,49 +1035,50 @@ fileInput.addEventListener('change', e => handleFiles(e.target.files));
     if(evt==='drop') handleFiles(e.dataTransfer.files);
   });
 });
-
 async function handleFiles(fileList){
   if(!activeSession) return;
   const files = Array.from(fileList);
   const status = document.getElementById('uploadStatus');
   const code = activeSession.code;
-
+  let failedCount = 0;
   for(let i=0;i<files.length;i++){
     const file = files[i];
     const isVideo = file.type.startsWith('video/') || /\.(mp4|mov|webm)$/i.test(file.name);
     const baseName = `${Date.now()}_${i}_${file.name}`;
-
     status.textContent = `Processing ${i+1} of ${files.length}…`;
     let previewBlob = null;
     try{
       previewBlob = isVideo ? await makeVideoPreview(file) : await makeImagePreview(file);
-    }catch(e){ previewBlob = null; }
-
+    }catch(e){
+      previewBlob = null;
+      failedCount++;
+      showToast(`Could not generate preview for ${file.name} — skipping watermark`, 'error');
+    }
     status.textContent = `Uploading ${i+1} of ${files.length}…`;
     const { error: e1 } = await sb.storage.from(BUCKET)
       .upload(`${code}/full/${baseName}`, file, { upsert: true });
-    if(e1){ status.textContent = 'Upload error: ' + e1.message; return; }
-
+    if(e1){
+      status.textContent = `Upload failed on file ${i+1}: ` + e1.message;
+      showToast(`Upload stopped — ${e1.message}`, 'error');
+      return;
+    }
     if(previewBlob){
       const { error: e2 } = await sb.storage.from(BUCKET)
         .upload(`${code}/preview/${baseName}.jpg`, previewBlob, { upsert: true, contentType: 'image/jpeg' });
-      if(e2){ status.textContent = 'Upload error (preview): ' + e2.message; }
+      if(e2){
+        status.textContent = `Uploaded but preview error: ` + e2.message;
+        showToast(`Preview upload failed: ${e2.message}`, 'error');
+      }
     }
   }
-  status.textContent = `${files.length} file(s) uploaded ✓ — watermarked previews ready. Tap "Notify Client" to text them the link.`;
+  const msg = failedCount > 0 ? `${files.length - failedCount} file(s) uploaded ✓ (${failedCount} preview failed)` : `${files.length} file(s) uploaded ✓`;
+  status.textContent = msg + ' — Tap "Notify Client" to text them.';
   loadThumbs();
   const notifyBtn = document.getElementById('notifyBtn');
   if(notifyBtn) notifyBtn.classList.add('notify-pulse');
 }
-
-// ---- NOTIFY CLIENT ----
 async function notifyClient(){
   if(!activeSession) return;
-
-  // Guard against sending "your photos are ready" before anything's actually
-  // uploaded — this is what happened when a client got a link to an empty
-  // gallery. Check storage directly rather than the DOM so it's accurate
-  // even if loadThumbs hasn't run yet.
   const code = activeSession.code;
   const { data: files } = await sb.storage.from(BUCKET).list(`${code}/full`, {limit:1});
   const hasUploads = files && files.some(f => f.name !== '.emptyFolderPlaceholder');
@@ -1342,25 +1091,17 @@ async function notifyClient(){
     });
     if(!go) return;
   }
-
   const link = clientLink(activeSession.code);
   const who = activeSession.label ? activeSession.label + ' ' : '';
   const msg = `Hey ${who}— your photos & reels from tonight are ready ✨ Pick your favorites and grab them here: ${link}`;
   document.getElementById('notifyBtn').classList.remove('notify-pulse');
-
   sendClientMessage(activeSession.contact, msg, { emailSubject: 'Your ATCHÉ Visuals photos are ready ✨' });
 }
-
-// ---- SHARED SEND HELPER ----
-// Routes a message to a client via SMS, email, or clipboard based on what's
-// in their `contact` field — same auto-detect logic notifyClient() used,
-// factored out so other actions (like Send Feedback Request) can reuse it.
 function sendClientMessage(contact, msg, opts = {}){
   const raw = (contact || '').trim();
   const digits = raw.replace(/[^\d+]/g, '');
   const isPhone = digits.replace(/[^\d]/g, '').length >= 7;
   const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw);
-
   if(isPhone){
     const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const sep = isiOS ? '&' : '?';
@@ -1379,17 +1120,10 @@ function sendClientMessage(contact, msg, opts = {}){
     }
   }
 }
-
-// ---- SEND FEEDBACK REQUEST ----
-// Pilot-feedback nudge, mainly for clients who didn't end up purchasing.
-// Frames tonight as a pilot launch, links the short survey (atche-visuals-feedback.html)
-// with the session code attached, and mentions the free-juice incentive for
-// leaving contact info on the survey itself.
 async function sendFeedbackRequest(s){
   const link = feedbackLink(s.code);
   const who = s.label ? s.label + ' ' : '';
   const msg = `Hey ${who}— thanks for being part of our ATCHÉ Visuals pilot launch tonight! Mind giving quick (60-sec) feedback? ${link} — leave your info on the survey and we'll hook you up with a free juice next time 🍹`;
-
   const goFeedback = await showModal({
     title: 'Send Feedback Request',
     body: `Send a pilot-feedback request to ${s.label || s.code}${s.contact ? ' via ' + s.contact : ' (no contact on file — message will be copied to clipboard)'}?`,
@@ -1397,10 +1131,8 @@ async function sendFeedbackRequest(s){
     cancel: 'Cancel'
   });
   if(!goFeedback) return;
-
   sendClientMessage(s.contact, msg, { emailSubject: 'Quick feedback on tonight — ATCHÉ Visuals' });
 }
-
 async function loadThumbs(){
   if(!activeSession) return;
   const code = activeSession.code;
@@ -1438,10 +1170,6 @@ async function loadThumbs(){
     grid.appendChild(div);
   });
 }
-
-// ---- THUMBNAIL LIGHTBOX ----
-// Tap any uploaded thumbnail to view the clean full-resolution original
-// (not the watermarked preview) full-screen — for photos and reels alike.
 function openThumbLightbox(url, isVideo){
   const lightbox = document.getElementById('thumbLightbox');
   const img = document.getElementById('thumbLightboxImg');
@@ -1460,7 +1188,6 @@ function openThumbLightbox(url, isVideo){
   }
   lightbox.classList.add('show');
 }
-
 function closeThumbLightbox(event){
   if(event) event.stopPropagation();
   const lightbox = document.getElementById('thumbLightbox');
@@ -1469,7 +1196,6 @@ function closeThumbLightbox(event){
   video.src = '';
   lightbox.classList.remove('show');
 }
-
 async function deletePhoto(fileName){
   if(!activeSession) return;
   const confirmed = await showModal({
@@ -1488,7 +1214,6 @@ async function deletePhoto(fileName){
   if(error){ showToast('Error: ' + error.message, 'error'); return; }
   loadThumbs();
 }
-
 function copyLink(e){
   if(!activeSession) return;
   const btn = e ? e.target : document.querySelector('.btn-secondary');
@@ -1500,7 +1225,6 @@ function copyLink(e){
     })
     .catch(() => showToast('Copy failed — tap and hold the link to copy it manually', 'error'));
 }
-
 async function forgotPassword(){
   const email = document.getElementById('loginEmail').value.trim();
   const errEl = document.getElementById('authErr');
@@ -1515,11 +1239,8 @@ async function forgotPassword(){
     if(errEl){ errEl.textContent = 'Check your email — a password reset link has been sent.'; errEl.style.display = 'block'; }
   }
 }
-
 boot();
 </script>
-
-<!-- CUSTOM MODAL -->
 <div class="cm-overlay" id="cmOverlay" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
   <div class="cm-box" id="cmBox">
     <div class="cm-title" id="cmTitle"></div>
@@ -1528,9 +1249,6 @@ boot();
     <div class="cm-actions" id="cmActions"></div>
   </div>
 </div>
-
-<!-- TOAST -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
 </body>
 </html>
