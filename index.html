@@ -56,7 +56,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .form-input{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:11px 14px;color:var(--text);font-size:14px;outline:none;transition:border-color var(--t);font-family:'Inter',sans-serif}
 .form-input:focus{border-color:var(--gold)}
 .form-input::placeholder{color:var(--text3)}
-.btn-primary{width:100%;padding:13px;background:var(--gold);color:var(--black);border:none;border-radius:8px;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:var(--t)}
+.btn-primary{width:100%;padding:13px;background:var(--gold);color:var(--black);border:none;border-radius:8px;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:var(--t);box-shadow:0 8px 24px rgba(201,168,76,0.25);font-size:12px}
 .btn-primary:hover:not(:disabled){background:var(--gold-light)}
 .btn-primary:disabled{opacity:0.4;cursor:not-allowed}
 .auth-switch{text-align:center;margin-top:16px;font-size:12px;color:var(--text3)}
@@ -73,7 +73,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .close-session-row{margin-top:18px;padding-top:16px;border-top:1px solid var(--border);text-align:center}
 .close-session-btn{background:transparent;border:1px solid var(--border2);border-radius:8px;color:var(--text3);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:10px 20px;cursor:pointer;transition:border-color var(--t),color var(--t)}
 .close-session-btn:hover{border-color:rgba(194,105,122,0.4);color:var(--rose)}
-.card{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:26px;position:relative;overflow:hidden;margin-bottom:18px}
+.card{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:26px;position:relative;overflow:hidden;margin-bottom:18px;box-shadow:0 8px 32px rgba(0,0,0,0.3);transition:box-shadow var(--t),transform var(--t)}
 .card:has(#sessList){overflow:visible}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent)}
 .card h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px}
@@ -107,7 +107,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .share-qr img{width:100%;height:100%;display:block}
 .share-info{flex:1;min-width:180px}
 .share-link{font-size:12px;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;word-break:break-all;margin-bottom:10px;font-family:monospace}
-.btn-secondary{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid var(--gold);border-radius:8px;padding:9px 16px;cursor:pointer;transition:var(--t)}
+.btn-secondary{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid var(--gold);border-radius:8px;padding:9px 16px;cursor:pointer;transition:var(--t);box-shadow:0 4px 12px rgba(201,168,76,0.1)}
 .btn-secondary:hover{background:var(--gold-dim)}
 .drop-zone{border:1.5px dashed var(--border2);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;transition:var(--t);background:var(--surface2)}
 .drop-zone:hover, .drop-zone.drag{border-color:var(--gold);background:var(--gold-dim)}
@@ -125,8 +125,8 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .thumb-delete:hover{background:var(--rose);border-color:var(--rose);color:#fff}
 .thumb-delete:active{transform:scale(0.92)}
 .upload-status{font-size:11px;color:var(--text3);margin-top:10px;text-align:center;letter-spacing:0.5px}
-.sess-item{display:flex;align-items:center;gap:12px;border:1px solid var(--border2);border-radius:10px;padding:12px 14px;margin-bottom:8px;background:var(--surface2);transition:var(--t)}
-.sess-item:hover{border-color:rgba(201,168,76,0.4)}
+.sess-item{display:flex;align-items:center;gap:12px;border:1px solid var(--border2);border-radius:10px;padding:12px 14px;margin-bottom:8px;background:var(--surface2);transition:var(--t);box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+.sess-item:hover{border-color:rgba(201,168,76,0.5);box-shadow:0 8px 24px rgba(201,168,76,0.15);transform:translateY(-2px)}
 .sess-code{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--gold);letter-spacing:1px;width:64px;flex-shrink:0}
 .sess-meta{flex:1;min-width:0}
 .sess-label{font-size:12px;color:var(--text);font-weight:500}
@@ -363,6 +363,8 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
     <div class="av-footer">
       <a onclick="window.open('https://atche-visuals.atcheofficial.com/','_blank')">↗ Client Door Preview</a>
       <span style="color:var(--border2)">·</span>
+      <a onclick="window.open('https://atcheofficial.com','_blank')">Join ATCHÉ ✨</a>
+      <span style="color:var(--border2)">·</span>
       <a onclick="doSignOut()">Sign Out</a>
     </div>
   </div>
@@ -453,8 +455,8 @@ function drawWatermark(ctx, w, h){
   ctx.save();
   const tileFont = Math.max(18, Math.round(w * 0.034));
   ctx.font = `700 ${tileFont}px 'Playfair Display', serif`;
-  ctx.fillStyle = 'rgba(242,237,230,0.35)';
-  ctx.strokeStyle = 'rgba(8,8,8,0.25)';
+  ctx.fillStyle = 'rgba(242,237,230,0.55)';
+  ctx.strokeStyle = 'rgba(8,8,8,0.4)';
   ctx.lineWidth = Math.max(1, tileFont * 0.04);
   ctx.textBaseline = 'middle';
   ctx.translate(w/2, h/2);
@@ -837,11 +839,22 @@ async function loadSessions(){
     list.innerHTML = '<div class="sess-empty">No sessions yet — create one above.</div>';
     return;
   }
+  let deleteBtn = document.getElementById('deleteSelectedBtn');
+  if(!deleteBtn){
+    deleteBtn = document.createElement('button');
+    deleteBtn.id = 'deleteSelectedBtn';
+    deleteBtn.className = 'btn-secondary';
+    deleteBtn.style.cssText = 'background:rgba(194,105,122,0.2);color:#E8A0AE;border-color:rgba(194,105,122,0.4);margin-bottom:12px;display:none';
+    deleteBtn.textContent = '🗑️ Delete Selected';
+    deleteBtn.onclick = () => deleteSelectedSessions();
+    list.parentNode.insertBefore(deleteBtn, list);
+  }
   list.innerHTML = '';
   data.forEach((s, idx) => {
     const div = document.createElement('div');
     div.className = 'sess-item';
     div.style.setProperty('--d', (Math.min(idx, 10) * 0.04) + 's');
+    div.dataset.id = s.id;
     const time = new Date(s.created_at).toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
     let badge, badgeClass;
     const needsConfirm = s.payment_requested && !s.paid;
@@ -853,6 +866,7 @@ async function loadSessions(){
     else { badge = 'Awaiting'; badgeClass = 'badge-pending'; }
     const hasOverflow = canFeedback || s.status === 'closed';
     div.innerHTML = `
+      <input type="checkbox" class="sess-check" style="width:18px;height:18px;cursor:pointer;flex-shrink:0" data-id="${s.id}">
       <div class="sess-code">${esc(s.code)}</div>
       <div class="sess-meta">
         <div class="sess-label">${esc(s.label) || '(no label)'}</div>
@@ -879,6 +893,7 @@ async function loadSessions(){
       div.querySelector('.sess-manual-pay').onclick = (e) => { e.stopPropagation(); manualMarkPaid(s); };
     }
     div.querySelector('.sess-open').onclick = () => openSession(s);
+    div.querySelector('.sess-check').onchange = () => toggleDeleteBtn();
     if(hasOverflow){
       const overflowBtn = div.querySelector('.sess-overflow-btn');
       const overflowMenu = div.querySelector('.sess-overflow-menu');
@@ -899,6 +914,28 @@ async function loadSessions(){
     }
     list.appendChild(div);
   });
+}
+function toggleDeleteBtn(){
+  const checked = document.querySelectorAll('.sess-check:checked').length;
+  const btn = document.getElementById('deleteSelectedBtn');
+  if(btn) btn.style.display = checked > 0 ? 'block' : 'none';
+}
+async function deleteSelectedSessions(){
+  const checked = Array.from(document.querySelectorAll('.sess-check:checked')).map(c => c.dataset.id);
+  if(checked.length === 0) return;
+  const confirmed = await showModal({
+    title: 'Delete Selected',
+    body: `Delete ${checked.length} closed session(s)? This cannot be undone.`,
+    confirm: 'Delete',
+    cancel: 'Cancel'
+  });
+  if(!confirmed) return;
+  for(const id of checked){
+    const { error } = await sb.from('visuals_sessions').delete().eq('id', id);
+    if(!error) document.querySelector(`[data-id="${id}"]`)?.remove();
+  }
+  showToast(`${checked.length} session(s) deleted`, 'success');
+  toggleDeleteBtn();
 }
 async function markPaid(s){
   const amt = s.package_price ? `$${s.package_price}` : 'this payment';
